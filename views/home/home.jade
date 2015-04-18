@@ -1,0 +1,9 @@
+//- home.jade
+
+extends ../layout
+
+block content
+  .jumbotron
+    textarea#memory-input.form-control(rows="3", placeholder="Text comes here...")
+    button.btn.btn-default Add
+    include _home_templates
