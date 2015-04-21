@@ -3,7 +3,14 @@
 extends ../layout
 
 block content
+
   .jumbotron
-    textarea#memory-input.form-control(rows="3", placeholder="Text comes here...")
-    button.btn.btn-default Add
-    include _home_templates
+    textarea#memory-fragment-input.form-control(rows="3", placeholder="Text comes here...")
+    .clearer
+    #memory-path-selection-container
+    .clearer
+    button#memory-submit.btn.btn-lg.btn-primary Add
+  .clearer
+  #memory-fragments-container
+
+  include _home_templates

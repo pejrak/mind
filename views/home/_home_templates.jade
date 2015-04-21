@@ -1,0 +1,16 @@
+script#memory_fragment_tmpl(type="text/html")
+  .mind-fragment(id="fragment_{$id}", data-path="{$path.join('|')}") {$text}
+
+script#memory_fragments_list_tmpl(type="text/html")
+  #memory-fragments-label {$label}
+  #memory-fragments-list
+
+script#memory_fragments_extract_tmpl(type="text/html")
+  li#memory-extract
+    a#memory-extract-link(href="#") Extract ({$count})
+
+script#memory_path_selection_tmpl(type="text/html")
+  select#memory-path-select.form-control
+
+script#memory_path_select_option_tmpl(type="text/html")
+  option(value="{$key}") {$name}

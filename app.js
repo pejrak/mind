@@ -14,6 +14,7 @@ var port = (process.env.PORT || 3000)
 var MIND = {
   name: 'Mind',
   env: environment,
+  environment: environment,
   config: require('./conf/config'),
   app: app,
   express: express,
