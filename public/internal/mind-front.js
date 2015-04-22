@@ -1,8 +1,27 @@
 MIND.front = (function() {
+
   // Initialize listeners
   function init() {
     $("#memory-submit").click(submitMemory)
+    $("#memory-search").on("input", searchMemory)
     $("body").on("click", "#memory-extract-link", extract)
+
+    MIND.index = initSearch()
+  }
+
+  function initSearch() {
+    return lunr(function () {
+      var idx = this
+      idx.field("text", { boost: 10 })
+      idx.field("path")
+      idx.ref("id")
+    })    
+  }
+
+  function searchMemory(event) {
+    MIND.timeIt(function() {
+      refresh()
+    })
   }
 
   function getCurrentPath() {
@@ -34,17 +53,31 @@ MIND.front = (function() {
     refresh()
   }
 
-  function filterFragmentsOnPath() {
+  function filterFragments() {
+    var query = $("#memory-search").val()
     var filtered = []
     var fragments = MIND.Memory.fragments || []
 
     fragments.forEach(function(fragment) {
       var path_comparison = comparePaths(fragment.path, getCurrentPath())
-      MIND.log("path_comparison:", path_comparison)
+      // MIND.log("path_comparison:", path_comparison)
       if (!path_comparison.diff_left.length) {
         filtered.push(fragment)
       }
     })
+    MIND.Memory.on_path = filtered.slice(0)
+    if (query && query.length > 1) {
+      var hits = MIND.index.search(query)
+      var matching_ids = hits.map(function(hit) {
+        return parseInt(hit.ref)
+      })
+
+      MIND.log("filterFragments | matching_ids:", matching_ids)
+      var matching = filtered.filter(function(fragment) {
+        return (matching_ids.indexOf(fragment.id) > -1)
+      })
+      filtered = matching
+    }
     return filtered
   }
 
@@ -55,34 +88,53 @@ MIND.front = (function() {
     }
   }
 
-  function displayPathSelections() {
-    
-    var current_paths = MIND.Memory.paths
-    current_paths.forEach(function(path) {
-      
+  function pathName(path) {
+    var name = ""
+    var path_len = path.length
+
+    path.forEach(function(point, p_idx) {
+      var last_point = ((p_idx + 1) === path_len)
+      name += (MIND.capLead(point) + (last_point ? "" : " - "))
     })
 
+    return name
+  }
+
+  function displayPathSelections() {
+    var selector
+
+    // First render the selector
+    $("#memory-path-selection-container").html(
+      MIND.render("memory_path_selection_tmpl")
+    )
+    selector = $("#memory-path-select")
+    // Now render options for the selector
+    MIND.Memory.paths.forEach(function(path) {
+      selector.append(MIND.render("memory_path_select_option_tmpl", {
+        key: path.join("|"),
+        name: pathName(path)
+      }))
+    })
   }
 
   function displayFragments() {
-    MIND.log("displayFragments | my fragments:", MIND.Memory.fragments)
 
+    var filtered_fragments = filterFragments()
     var current_time = Date.now()
-    var fragments_to_show = filterFragmentsOnPath()
-    var count = fragments_to_show.length
+    var count = filtered_fragments.length
+    var fragments_content = ""
     var fragment_list = MIND.render("memory_fragments_list_tmpl", {
-          label: (fragments_to_show.length ? (
+          label: (count ? (
             "Displaying " + count + " fragment" + (count === 1 ? "" : "s") + "."
           ) : "No fragments on path.")
         })
 
-    $("#memory-fragments-container").html(fragment_list)
-
-    fragments_to_show.forEach(function(fragment) {
-      var fragment_content = MIND.render("memory_fragment_tmpl", fragment)
-      $("#memory-fragments-list").append(fragment_content)
+    MIND.Memory.on_display = filtered_fragments
+    filtered_fragments.forEach(function(fragment) {
+      fragments_content += MIND.render("memory_fragment_tmpl", fragment)
     })
-
+    $("#memory-fragments-container").html(fragment_list)
+    $("#memory-fragments-list").html(fragments_content)
   }
 
   function displayMemoryOperators() {
@@ -98,15 +150,25 @@ MIND.front = (function() {
     }
   }
 
+  function displaySearch() {
+    var action = (
+          MIND.Memory.on_path && MIND.Memory.on_path.length
+        ) ? "show" : "hide"
+    $("#memory-search")[action]()
+  }
+
   function extract() {
     var memory_fragments = MIND.Memory.fragments
+    var extract_str = JSON.stringify(memory_fragments)
     MIND.log("extract | memory_fragments:", memory_fragments)
+    alert(extract_str)
   }
 
   function refresh() {
     displayFragments()
     displayPathSelections()
     displayMemoryOperators()
+    displaySearch()
   }
 
   return {

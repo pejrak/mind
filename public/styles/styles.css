@@ -8,8 +8,20 @@ body {
   height: 1em;
 }
 
+.lefter {
+  float: left;
+}
+
+.righter {
+  float: right;
+}
+
 .mind-fragment {
   padding: 1em;
   border: 1px solid #ccc;
-  margin: 1em;
+  margin-top: 1em;
+}
+
+#memory-path-selection-container {
+  width: 50%;
 }

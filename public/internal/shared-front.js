@@ -19,25 +19,22 @@ var MIND = (function() {
     }
   }
 
+  function fDate(date_int) {
+    var date = new Date(date_int || Date.now())
+    var hour = ("0" + date.getHours()).slice(-2)
+    var minute = ("0" + date.getMinutes()).slice(-2)
+    var month = ("0" + (date.getMonth() + 1)).slice(-2)
+    var day = ("0" + date.getDate()).slice(-2)
+    var year = date.getFullYear()
+
+    return (
+      hour + ":" + minute + ", " + day + "-" + month + "-" + year
+    )
+  }
+
 
   var Memory = (function() {
 
-    function Fragment(options) {
-      var text = options.text
-      var path = options.path
-      var now = Date.now()
-      var created_at = options.created_at || now
-      var updated_at = options.updated_at || now
-      var id = options.id || now
-
-      return {
-        id: id,
-        text: text,
-        created_at: created_at,
-        updated_at: updated_at,
-        path: path
-      }
-    }
     var LIMITS = {
       fragment_len: [2, 1000]
     }
@@ -76,8 +73,30 @@ var MIND = (function() {
     var fragments = []
     var attributes = {
           initiated_at: Date.now(),
+          initiated_at_f: fDate(),
           owner: undefined
         }
+
+    function Fragment(options) {
+      var text = options.text
+      var path = options.path
+      var now = Date.now()
+      var created_at = options.created_at || now
+      var updated_at = options.updated_at || now
+      var id = options.id || now
+      var owner = options.owner || attributes.owner
+
+      return {
+        id: id,
+        text: text,
+        created_at: created_at,
+        created_at_f: fDate(created_at),
+        updated_at: updated_at,
+        updated_at_f: fDate(updated_at),
+        path: path,
+        owner: owner,
+      }
+    }
 
     function add(text, path) {
       var validation_errors = []
@@ -93,9 +112,18 @@ var MIND = (function() {
           is_valid = false
         }
       })
-
+      // Check validity of the fragment
       if (is_valid) {
-        fragments.push(Fragment({ text: text, path: path }))
+        var fragment = Fragment({ text: text, path: path })
+
+        // Add to list
+        fragments.push(fragment)
+        // Add to index for searching
+        MIND.index.add({
+          id: fragment.id,
+          path: path.join(" "),
+          text: text
+        })
         return {
           success: true
         }
@@ -110,6 +138,8 @@ var MIND = (function() {
     return {
       add: add,
       fragments: fragments,
+      on_display: [],
+      on_path: [],
       attributes: attributes,
       paths: [["temporary"]]
     }
@@ -121,6 +151,21 @@ var MIND = (function() {
         )
     if (log_enabled) console.log(arguments);
   }
+
+  // Custom function for firing off delayed function execution with custom timer
+  function timeIt(execFunction, delay) {
+    // Set custom timer name, if function does not have a name, it will be just
+    // the appended string
+    var timer_name = execFunction.name + "_delayed_timer"
+    // Set default to 350 ms, which seems to be a good starting point
+    delay = (delay || 350)
+    // Clear previous timer if one is set
+    if (cache[timer_name]) {
+      clearTimeout(cache[timer_name])
+    }
+    // Now start a new timer
+    cache[timer_name] = setTimeout(execFunction, delay)
+  }  
 
 
   // Simple JavaScript Templating
@@ -156,11 +201,17 @@ var MIND = (function() {
     return (data ? fn(data) : fn)
   }
 
+  function capLead(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
 
   return {
     render: render,
     log: log,
     notify: notify,
+    timeIt: timeIt,
+    capLead: capLead,
     Memory: Memory
   }
 } ())

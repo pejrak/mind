@@ -1,5 +1,8 @@
 script#memory_fragment_tmpl(type="text/html")
-  .mind-fragment(id="fragment_{$id}", data-path="{$path.join('|')}") {$text}
+  .mind-fragment(id="fragment_{$id}", data-path="{$path.join('|')}") 
+    //- .mind-fragment-created-time.righter(data-created="{$created_at}") {$created_at_f}
+    .mind-fragment-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
+    .mind-fragment-text {$text}
 
 script#memory_fragments_list_tmpl(type="text/html")
   #memory-fragments-label {$label}
