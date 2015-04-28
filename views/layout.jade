@@ -20,16 +20,21 @@ html
     script(type='text/javascript', src='/external/jquery-2.1.3.min.js')
     script(type='text/javascript', src='/external/bootstrap/js/bootstrap.min.js')
     script(type='text/javascript', src='/external/lunr.min.js')
+    script(type='text/javascript', src='/external/sjcl.js')
     script(type='text/javascript', src='/internal/shared-front.js')
     script(type='text/javascript', src='/internal/mind-front.js')
 
     block head
 
-  body
+  body(data-user="#{current_user ? current_user.email : undefined}")
     nav#menu.navbar.navbar-inverse.navbar-fixed-top
       .container
         .navbar-header
-          a.navbar-brand(href="#") Clean
+          a.navbar-brand(href="#") Mind
+          - if (current_user)
+            a.navbar-brand(href="/logout")  (#{current_user.email})
+          - else
+            a.navbar-brand(href="/login") Login
         #navbar.navbar-collapse.collapse
           ul.nav.navbar-nav#memory-operators
 
@@ -42,5 +47,17 @@ html
     //- Custom micro templates
     script#notification_tmpl(type="text/html")
       .mind-notification.alert.alert-info(id="{$id}") {$message}
+
+    .modal.fade#login-window
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type="button", data-dismiss="modal", aria-label="Close")
+              span(aria-hidden="true") &times;
+            h4.modal-title Login here
+          .modal-body
+            p.login-body BODY
+          .modal-footer
+            button.btn.btn-default(type="button", data-dismiss="modal") Close
 
 

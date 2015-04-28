@@ -15,11 +15,25 @@ body {
 .righter {
   float: right;
 }
-
+/*
 .mind-fragment {
   padding: 1em;
   border: 1px solid #ccc;
   margin-top: 1em;
+}*/
+
+.mind-fragment .mind-fragment-path {
+  font-size: 90%;
+  color: #444;
+  display: none;
+}
+
+.mind-fragment-updated-time {
+  font-size: 90%;
+}
+
+.mind-fragment:hover .mind-fragment-path {
+  display: block;
 }
 
 #memory-path-selection-container {

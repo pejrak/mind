@@ -2,11 +2,19 @@ MIND.front = (function() {
 
   // Initialize listeners
   function init() {
-    $("#memory-submit").click(submitMemory)
+
+    $("#memory-submit").click(submitFragment)
     $("#memory-search").on("input", searchMemory)
+
+    // Dynamic listeners
     $("body").on("click", "#memory-extract-link", extract)
+    $("body").on("click", "#memory-wipe-link", wipe)
 
     MIND.index = initSearch()
+    displayPathSelections()
+    MIND.checkCurrentUser()
+    MIND.loadMemorySnapshot()
+    refresh()
   }
 
   function initSearch() {
@@ -15,7 +23,7 @@ MIND.front = (function() {
       idx.field("text", { boost: 10 })
       idx.field("path")
       idx.ref("id")
-    })    
+    })
   }
 
   function searchMemory(event) {
@@ -28,7 +36,7 @@ MIND.front = (function() {
     var path_selector = $("#mind-path-select")
     return (
       path_selector && path_selector.length ? 
-        path_selector.val() : MIND.Memory.paths[0]
+        path_selector.val().split("|") : MIND.Memory.paths[0]
     )
   }
 
@@ -36,7 +44,7 @@ MIND.front = (function() {
     $("#memory-fragment-input").val("")
   }
 
-  function submitMemory() {
+  function submitFragment() {
     var text = $("#memory-fragment-input").val()
     var current_path = getCurrentPath()
     var add_result = MIND.Memory.add(text, current_path)
@@ -47,7 +55,8 @@ MIND.front = (function() {
       })
     }
     else {
-      MIND.notify("Added fragment.")
+      MIND.notify("Added memory fragment.")
+      MIND.saveMemorySnapshot()
       cleanFragmentInput()
     }
     refresh()
@@ -141,12 +150,16 @@ MIND.front = (function() {
     var count = MIND.Memory.fragments.length
 
     // First remove extractor
-    $("#memory-extract").remove()
+    $("#memory-extract,#memory-wipe").remove()
     if (count) {
       var extraction_operator = MIND.render("memory_fragments_extract_tmpl", {
             count: count
           })
-      $("#memory-operators").append(extraction_operator)
+      var wipe_operator = MIND.render("memory_wipe_tmpl", {
+            count: count
+          })
+
+      $("#memory-operators").append(extraction_operator, wipe_operator)
     }
   }
 
@@ -161,7 +174,87 @@ MIND.front = (function() {
     var memory_fragments = MIND.Memory.fragments
     var extract_str = JSON.stringify(memory_fragments)
     MIND.log("extract | memory_fragments:", memory_fragments)
-    alert(extract_str)
+    // alert(extract_str)
+    var enc_extract = encrypt(extract_str)
+    alert("ENCRYPTED:\n" + enc_extract)
+    if (enc_extract) {
+      var dec_extract = decrypt(enc_extract)
+      alert("DECRYPTED:\n" + dec_extract)
+    }
+  }
+
+  function wipe() {
+    var confirmation = confirm("Do you want to erase all unsaved fragments?")
+    
+    if (confirmation) {
+      MIND.clean()
+      refresh()
+    }
+    else {
+      MIND.notify("Wipe out cancelled.")
+    }
+  }
+
+  function printEncRequirements(enc_limits) {
+    
+    return (
+      "- Minimum length: " + enc_limits[0] + " characters.\n" + 
+      "- Maximum length: " + enc_limits[1] + " characters.\n"
+    ) 
+  }
+
+  function encrypt(text, prompt_message) {
+    var enc_limits = MIND.Memory.LIMITS.enc_pwd_len
+    var enc_pwd
+
+    prompt_message = (prompt_message || "Provide password for encryption:")
+    prompt_message += ("\n\n" + printEncRequirements(enc_limits))
+    enc_pwd = prompt(prompt_message)
+
+    if (!enc_pwd) {
+      return null
+    }
+    else if (
+      enc_pwd.length >= enc_limits[0] && enc_pwd.length <= enc_limits[1]
+    ) {
+      var enc_pwd_retype = prompt("Please retype the password to confirm.")
+
+      if (!enc_pwd_retype) {
+        return null
+      }
+      else if (enc_pwd === enc_pwd_retype) {
+        var enc_text = sjcl.encrypt(enc_pwd, text)
+        return enc_text  
+      }
+      else {
+        encrypt(text, "Error: Confirmation password did not match!")
+      }
+    }
+    else {
+      encrypt(text, "Error: Password invalid.")
+    }
+  }
+
+  function decrypt(enc_text, prompt_message) {
+    prompt_message = (prompt_message || "Provide password for decryption:")
+    
+    var enc_pwd = prompt(prompt_message)
+
+    if (!enc_pwd) {
+      return null
+    }
+    else {
+      var dec_text
+      try {
+        dec_text = sjcl.decrypt(enc_pwd, enc_text)
+      }
+      catch(decryption_error) {
+        MIND.notify("Decryption error (Password provided may be incorrect).")
+      }
+      finally {
+        return dec_text
+      }
+    }
   }
 
   function refresh() {

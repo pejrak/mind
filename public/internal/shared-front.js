@@ -1,6 +1,15 @@
 var MIND = (function() {
-  
+  var current_user
+  var mem_pointer = "mind_snapshot"
   var cache = {}
+
+  function checkCurrentUser() {
+    current_user_data = $("body").attr("data-user")
+    if (current_user_data && current_user_data !== "none") {
+      current_user = current_user_data
+    }
+    Memory.owner = current_user
+  }
 
   function notify(message, options) {
     options = options || {}
@@ -36,8 +45,10 @@ var MIND = (function() {
   var Memory = (function() {
 
     var LIMITS = {
-      fragment_len: [2, 1000]
+      fragment_len: [2, 1000],
+      enc_pwd_len: [2, 100]
     }
+    var BASIC_PATHS = [["temporary"]]
     var validate = {
       fragment: function(text) {
         var passing = (
@@ -71,11 +82,6 @@ var MIND = (function() {
       }
     }    
     var fragments = []
-    var attributes = {
-          initiated_at: Date.now(),
-          initiated_at_f: fDate(),
-          owner: undefined
-        }
 
     function Fragment(options) {
       var text = options.text
@@ -84,7 +90,7 @@ var MIND = (function() {
       var created_at = options.created_at || now
       var updated_at = options.updated_at || now
       var id = options.id || now
-      var owner = options.owner || attributes.owner
+      var owner = options.owner || MIND.Memory.owner
 
       return {
         id: id,
@@ -97,6 +103,16 @@ var MIND = (function() {
         owner: owner,
       }
     }
+
+    function merge(fragment) {
+      fragments.push(fragment)
+      // Add to index for searching
+      MIND.index.add({
+        id: fragment.id,
+        path: fragment.path.join(" "),
+        text: fragment.text
+      })
+    } 
 
     function add(text, path) {
       var validation_errors = []
@@ -114,16 +130,7 @@ var MIND = (function() {
       })
       // Check validity of the fragment
       if (is_valid) {
-        var fragment = Fragment({ text: text, path: path })
-
-        // Add to list
-        fragments.push(fragment)
-        // Add to index for searching
-        MIND.index.add({
-          id: fragment.id,
-          path: path.join(" "),
-          text: text
-        })
+        merge(Fragment({ text: text, path: path }))
         return {
           success: true
         }
@@ -137,13 +144,78 @@ var MIND = (function() {
 
     return {
       add: add,
+      merge: merge,
       fragments: fragments,
       on_display: [],
       on_path: [],
-      attributes: attributes,
-      paths: [["temporary"]]
+      initiated_at: Date.now(),
+      initiated_at_f: fDate(),
+      owner: current_user,
+      LIMITS: LIMITS,
+      BASIC_PATHS: BASIC_PATHS,
+      paths: BASIC_PATHS.slice(0)
     }
   } ())
+  
+  function saveMemorySnapshot() {
+    var mem_len = Memory.fragments.length
+
+    if (mem_len) {
+      MIND.log("saveMemorySnapshot | mem_len:", mem_len)
+      localStorage.setItem(mem_pointer, JSON.stringify({
+        fragments: Memory.fragments,
+        initiated_at: Memory.initiated_at,
+        owner: current_user
+      }))
+    }
+  }
+
+  function clean() {
+    var now = Date.now()
+
+    Memory.fragments = []
+    Memory.on_path = []
+    Memory.on_display = []
+    Memory.initiated_at = now
+    Memory.initiated_at_f = fDate(now)
+    Memory.paths = Memory.BASIC_PATHS.slice(0)
+    localStorage.removeItem(mem_pointer)
+  }
+
+  function loadMemorySnapshot() {
+    var snapshot_str = localStorage.getItem(mem_pointer)
+
+    MIND.log("loadMemorySnapshot | snapshot_str:", snapshot_str)
+    if (
+      snapshot_str && typeof(snapshot_str) === "string" && 
+      snapshot_str.length
+    ) {
+      var snapshot
+      var parsing_error
+      try {
+        snapshot = JSON.parse(snapshot_str)
+      }
+      catch (error) {
+        parsing_error = error
+      }
+      finally {
+        if (snapshot && snapshot.fragments) {
+          snapshot.fragments.forEach(function(fragment) {
+            Memory.merge(fragment)
+          })
+          Memory.initiated_at = snapshot.initiated_at
+          Memory.initiated_at_f = fDate(Memory.initiated_at)
+          MIND.log("snapshot:", snapshot)
+          notify("Loaded memory from local store.")
+
+        }
+        else {
+          notify("Unable to load local storage. " + (
+            parsing_error ? "Memory is corrupt." : ""))
+        }
+      }
+    }
+  }
 
   function log() {
     var log_enabled = (
@@ -208,11 +280,15 @@ var MIND = (function() {
 
   return {
     render: render,
+    clean: clean,
     log: log,
     notify: notify,
     timeIt: timeIt,
     capLead: capLead,
-    Memory: Memory
+    Memory: Memory,
+    loadMemorySnapshot: loadMemorySnapshot,
+    saveMemorySnapshot: saveMemorySnapshot,
+    checkCurrentUser: checkCurrentUser
   }
 } ())
 
