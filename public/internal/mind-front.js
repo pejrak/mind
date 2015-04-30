@@ -1,5 +1,10 @@
 MIND.front = (function() {
 
+  var containers = {
+    extraction_modal_id: "mind-extraction-modal",
+    load_modal_id: "mind-load-modal",
+  }
+
   // Initialize listeners
   function init() {
 
@@ -7,14 +12,47 @@ MIND.front = (function() {
     $("#memory-search").on("input", searchMemory)
 
     // Dynamic listeners
-    $("body").on("click", "#memory-extract-link", extract)
+    $("body").on("click", "#memory-extract-link", extractConfirm)
     $("body").on("click", "#memory-wipe-link", wipe)
+    $("body").on("click", "#mind-extract-submit", extractSubmit)
+    $("body").on("click", "#memory-load", loadConfirm)
 
     MIND.index = initSearch()
     displayPathSelections()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     refresh()
+  }
+
+  function checkStorageStatus(done) {
+    var source_options = {
+      remote_mind: false,
+      remote_dropbox: false
+    }
+
+    MIND.notify("Checking storage status")
+    if (MIND.current_user && MIND.current_user !== "none") {
+      $.get("/storage/status", function (response) {
+        if (response && response.source_options) {
+          var loaded_source_options = response.source_options
+
+          source_options.remote_mind = loaded_source_options.remote_mind
+          source_options.remote_dropbox = loaded_source_options.remote_dropbox
+          finalize()
+        }
+        else {
+          finalize()
+        }
+      })
+    }
+    else {
+      
+    }
+
+    function finalize() {
+      return done(null, source_options)
+    }
+    
   }
 
   function initSearch() {
@@ -144,6 +182,8 @@ MIND.front = (function() {
     })
     $("#memory-fragments-container").html(fragment_list)
     $("#memory-fragments-list").html(fragments_content)
+    $(".mind-fragment-text").linkify()
+
   }
 
   function displayMemoryOperators() {
@@ -170,17 +210,140 @@ MIND.front = (function() {
     $("#memory-search")[action]()
   }
 
-  function extract() {
-    var memory_fragments = MIND.Memory.fragments
-    var extract_str = JSON.stringify(memory_fragments)
-    MIND.log("extract | memory_fragments:", memory_fragments)
-    // alert(extract_str)
-    var enc_extract = encrypt(extract_str)
-    alert("ENCRYPTED:\n" + enc_extract)
-    if (enc_extract) {
-      var dec_extract = decrypt(enc_extract)
-      alert("DECRYPTED:\n" + dec_extract)
+  function extractConfirm(message) {
+    var memory_recall = MIND.Memory.recall()
+    var modal_id = containers.extraction_modal_id
+    var fragment_count = memory_recall.fragments.length
+    var modal_title = (typeof(message) === "string" ? message : (
+      "Extract memory fragments (" + fragment_count + ")"
+    ))
+
+    MIND.log("extract | fragment_count, MIND.current_user:", fragment_count, MIND.current_user)
+    // First remove any extraction modal previously created
+    hideExtractionModal(true)
+
+    var extraction_modal_content = MIND.render("modal_dialog_tmpl", {
+      modal_id: modal_id,
+      title: modal_title,
+      body: MIND.render("extraction_input_tmpl", {
+        count: fragment_count,
+        password_requirements: 
+          printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
+        remote_dropbox: false,
+        remote_mind: (typeof(MIND.current_user) === "string")
+      }),
+      button_label: "Extract now",
+      button_id: "mind-extract-submit"
+    })
+
+    $("#content").append(extraction_modal_content)
+    $("#" + modal_id).modal("show")
+  }
+
+  function loadConfirm() {
+    checkStorageStatus(function (storage_status) {
+
+      var load_modal_content = MIND.render("modal_dialog_tmpl", {
+        modal_id: modal_id,
+        title: "Load and merge stored memory",
+        body: MIND.render("load_input_tmpl", {
+          count: fragment_count,
+          password_requirements: 
+            printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
+          remote_dropbox: false,
+          remote_mind: (typeof(MIND.current_user) === "string")
+        }),
+        button_label: "Extract now",
+        button_id: "mind-extract-submit"
+      })
+
+
+    })
+
+  }
+
+  function extractSubmit(event) {
+    var enc_pwd = $("#extraction-password").val()
+    var storage_selection = $("#extraction-target-select").val()
+    var memory_recall = MIND.Memory.recall()
+    var extract_str = JSON.stringify(memory_recall)
+    var content_extract
+
+    MIND.log("extractSubmit | enc_pwd:", enc_pwd)
+
+    if (enc_pwd && enc_pwd.length) {
+      if (passwordValid(enc_pwd, MIND.Memory.LIMITS.enc_pwd_len)) {
+        content_extract = sjcl.encrypt(enc_pwd, extract_str)
+      }
+      else {
+        extractConfirm("Error: Password invalid.")
+      }
     }
+    else {
+      // We are only downloading as plain text
+      content_extract = extract_str
+    }
+
+    if (content_extract) {
+      extract(storage_selection, content_extract)
+      hideExtractionModal()
+    }
+  }
+
+  function hideExtractionModal(remove) {
+    var el_id = "#" + containers.extraction_modal_id
+
+    if (remove) {
+      $(el_id).remove()
+    }
+    else {
+      $(el_id).modal("hide")
+    }
+  }
+
+  function extract(storage_selection, content_extract) {
+   
+    var storageExtraction = {
+      local: function() {
+        localStore(content_extract)
+      },
+      remote_mind: function() {
+        remoteStore("remote_mind", content_extract)
+      },
+      remote_dropbox: function() {
+        remoteStore("remote_dropbox", content_extract)
+      }
+    }
+
+    // Check the current user selection
+    MIND.checkCurrentUser()
+    storageExtraction[storage_selection]()
+  }
+
+  function localStore(content_extract) {
+
+    MIND.log("localStore | content_extract:", content_extract)
+
+    var file_name = (
+          "content_extract_" + Date.now() + "_" +
+          MIND.current_user.replace(/[^a-z0-9]/gi, "_") +  ".txt"
+        )
+    $("#local-download")
+      .attr("href", (
+        "data:text/plain;charset=UTF-8," + content_extract
+      ))
+      .attr("download", file_name)
+    document.getElementById("local-download").click()
+  }
+
+  function remoteStore(storage_type, content_extract) {
+    var content_encoded = MIND.toBase(content_extract)
+    
+    $.post("/store/" + storage_type, {
+      extract: content_encoded     
+    }, function (response) {
+      MIND.notify(response.message)
+    })
   }
 
   function wipe() {
@@ -203,36 +366,8 @@ MIND.front = (function() {
     ) 
   }
 
-  function encrypt(text, prompt_message) {
-    var enc_limits = MIND.Memory.LIMITS.enc_pwd_len
-    var enc_pwd
-
-    prompt_message = (prompt_message || "Provide password for encryption:")
-    prompt_message += ("\n\n" + printEncRequirements(enc_limits))
-    enc_pwd = prompt(prompt_message)
-
-    if (!enc_pwd) {
-      return null
-    }
-    else if (
-      enc_pwd.length >= enc_limits[0] && enc_pwd.length <= enc_limits[1]
-    ) {
-      var enc_pwd_retype = prompt("Please retype the password to confirm.")
-
-      if (!enc_pwd_retype) {
-        return null
-      }
-      else if (enc_pwd === enc_pwd_retype) {
-        var enc_text = sjcl.encrypt(enc_pwd, text)
-        return enc_text  
-      }
-      else {
-        encrypt(text, "Error: Confirmation password did not match!")
-      }
-    }
-    else {
-      encrypt(text, "Error: Password invalid.")
-    }
+  function passwordValid(enc_pwd, enc_limits) {
+    return (enc_pwd.length >= enc_limits[0] && enc_pwd.length <= enc_limits[1])
   }
 
   function decrypt(enc_text, prompt_message) {

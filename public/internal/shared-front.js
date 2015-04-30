@@ -8,6 +8,7 @@ var MIND = (function() {
     if (current_user_data && current_user_data !== "none") {
       current_user = current_user_data
     }
+    MIND.current_user = current_user
     Memory.owner = current_user
   }
 
@@ -49,6 +50,7 @@ var MIND = (function() {
       enc_pwd_len: [2, 100]
     }
     var BASIC_PATHS = [["temporary"]]
+    var initiated_at = Date.now()
     var validate = {
       fragment: function(text) {
         var passing = (
@@ -112,7 +114,24 @@ var MIND = (function() {
         path: fragment.path.join(" "),
         text: fragment.text
       })
-    } 
+    }
+
+    function recall(filter) {
+      var extraction = {
+            initiated_at: initiated_at,
+            extracted_at: Date.now(),
+            owner: current_user
+          }
+
+      if (filter) {
+        // We will be filtering here
+      }
+      else {
+        extraction.fragments = fragments
+      }
+
+      return extraction
+    }
 
     function add(text, path) {
       var validation_errors = []
@@ -145,28 +164,26 @@ var MIND = (function() {
     return {
       add: add,
       merge: merge,
+      recall: recall,
       fragments: fragments,
       on_display: [],
       on_path: [],
-      initiated_at: Date.now(),
-      initiated_at_f: fDate(),
+      initiated_at: initiated_at,
+      initiated_at_f: fDate(initiated_at),
       owner: current_user,
       LIMITS: LIMITS,
       BASIC_PATHS: BASIC_PATHS,
       paths: BASIC_PATHS.slice(0)
     }
   } ())
-  
+
+
   function saveMemorySnapshot() {
     var mem_len = Memory.fragments.length
 
     if (mem_len) {
       MIND.log("saveMemorySnapshot | mem_len:", mem_len)
-      localStorage.setItem(mem_pointer, JSON.stringify({
-        fragments: Memory.fragments,
-        initiated_at: Memory.initiated_at,
-        owner: current_user
-      }))
+      localStorage.setItem(mem_pointer, JSON.stringify(Memory.recall()))
     }
   }
 
@@ -221,7 +238,11 @@ var MIND = (function() {
     var log_enabled = (
           $("#content").attr("data-system-environment") === "development"
         )
-    if (log_enabled) console.log(arguments);
+
+    if (log_enabled) {
+      var args = Array.prototype.slice.call(arguments)
+      console.log(args)
+    }
   }
 
   // Custom function for firing off delayed function execution with custom timer
@@ -277,6 +298,16 @@ var MIND = (function() {
     return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
+  // Base 64 enc, got from 
+  // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/btoa#Unicode_Strings
+  function toBase(str) {
+      return window.btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function fromBase(str) {
+      return decodeURIComponent(escape(window.atob(str)));
+  }
+
 
   return {
     render: render,
@@ -285,7 +316,10 @@ var MIND = (function() {
     notify: notify,
     timeIt: timeIt,
     capLead: capLead,
+    toBase: toBase,
+    fromBase: fromBase,
     Memory: Memory,
+    current_user: current_user,
     loadMemorySnapshot: loadMemorySnapshot,
     saveMemorySnapshot: saveMemorySnapshot,
     checkCurrentUser: checkCurrentUser
