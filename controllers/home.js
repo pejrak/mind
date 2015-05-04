@@ -15,7 +15,7 @@ module.exports = function (MIND) {
 
   MIND.route.post('/store/:storage_type', function (req, res) {
     var extract = req.body.extract
-    var storage_type = request.params.storage_type
+    var storage_type = req.params.storage_type
     var user_email = (req.current_user || {}).email
 
     if (user_email) {
@@ -34,21 +34,44 @@ module.exports = function (MIND) {
     }
   })
 
-  MIND.route.post('/storage/status', function (req, res) {
-    var extract = req.body.extract
+  MIND.route.get('/storage/status', function (req, res) {
     var user_email = (req.current_user || {}).email
 
     if (user_email) {
-      var file_name = "temporary_fragments_" + common.hashCode(user_email)
-      var source_file_path = (storage_dir + "/" + file_name)
-      fs.writeFile(target_file_path, extract, function(error) {
+      MIND.storage.check(user_email, function(errors, source_options) {
         res.send({
-          message: (error ? "Unable to write file." : "Memory written.")
+          source_options: source_options,
+          message: "Checked storage options."
         })
       })
     }
     else {
-      res.send({ message: "Unable to recognize user." })
+      res.send({
+        message: "Login again to access storage options.",
+        source_options: null
+      })
+    }
+  })
+
+  MIND.route.get('/storage/load/:storage_type', function (req, res) {
+    var user_email = (req.current_user || {}).email
+    var storage_type = req.params.storage_type
+
+    if (user_email) {
+      MIND.storage.load({
+        user_email: user_email,
+        storage_type: storage_type
+      }, function(errors, content) {
+        res.send({
+          content: content,
+          message: "Loaded storage."
+        })
+      })
+    }
+    else {
+      res.send({
+        message: "Login again to access storage options."
+      })
     }
   })
 

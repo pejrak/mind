@@ -15,7 +15,9 @@ MIND.front = (function() {
     $("body").on("click", "#memory-extract-link", extractConfirm)
     $("body").on("click", "#memory-wipe-link", wipe)
     $("body").on("click", "#mind-extract-submit", extractSubmit)
+    $("body").on("click", "#mind-load-submit", loadSubmit)
     $("body").on("click", "#memory-load", loadConfirm)
+    $("body").on("change", "#load-source-select", toggleLoadLocal)
 
     MIND.index = initSearch()
     displayPathSelections()
@@ -24,35 +26,97 @@ MIND.front = (function() {
     refresh()
   }
 
-  function checkStorageStatus(done) {
-    var source_options = {
-      remote_mind: false,
-      remote_dropbox: false
-    }
+  function loadSubmit() {
+    var selected_source = $("#load-source-select").val()
+    var loaded_memory
 
-    MIND.notify("Checking storage status")
-    if (MIND.current_user && MIND.current_user !== "none") {
-      $.get("/storage/status", function (response) {
-        if (response && response.source_options) {
-          var loaded_source_options = response.source_options
-
-          source_options.remote_mind = loaded_source_options.remote_mind
-          source_options.remote_dropbox = loaded_source_options.remote_dropbox
-          finalize()
+    hideModal(containers.load_modal_id)
+    loadStoredMemory(selected_source, function (errors, content) {
+      var data = MIND.checkStructure(content)
+      MIND.log("loadSubmit | data:", data)
+      if (data.parsing_error) {
+        MIND.notify("Unable to process loaded memory (parsing error).")
+      }
+      else {
+        if (data.is_encrypted) {
+          var to_parse = decrypt(JSON.stringify(data.parsed_content))
+          if (to_parse && to_parse.length) {
+            loaded_memory = JSON.parse(to_parse)
+          }
         }
         else {
-          finalize()
+          loaded_memory = data.parsed_content
         }
-      })
+        if (
+          MIND.validSnapshot(loaded_memory)
+        ) {
+          MIND.mergeMemory(loaded_memory, selected_source)
+          cleanSearchInput()
+          refresh()
+        }
+        else {
+          MIND.notify("Unable to decrypt data.")
+        }
+        // MIND.log("loaded_memory:", loaded_memory)
+      }
+    })
+  }
+
+  function cleanSearchInput() {
+    $("#memory-search").val("")
+  }
+
+
+
+  function loadStoredMemory(source, done) {
+    var loadMethods = {
+      local: function() {
+        return loadLocalFile(done)
+      },
+      remote_mind: function() {
+        return loadRemoteMemory(source, done)
+      },
+      remote_dropbox: function() {
+        return loadRemoteMemory(source, done)
+      }
+    }
+    var loadMethod = loadMethods[source]
+
+    if (loadMethod) loadMethods[source]()
+  }
+
+  function loadLocalFile(done) {
+    var content
+    var selected_file = $("#load-source-file").val()
+
+    MIND.log("loadLocalFile | selected_file:", selected_file)
+    if (selected_file) {
+      MIND.notify("File selected.")
+      return done()
     }
     else {
-      
+      MIND.notify("No file is selected.")
+      return done()
     }
+  }
+
+  function loadRemoteMemory(source, done) {
+    var content
+
+    $.get("/storage/load/" + source, function(response) {
+      if (response && response.content) {
+        var content_base = response.content
+        content = MIND.fromBase(content_base)
+        return finalize()
+      }
+      else {
+        return finalize()
+      }
+    })
 
     function finalize() {
-      return done(null, source_options)
+      return done(null, content)
     }
-    
   }
 
   function initSearch() {
@@ -68,6 +132,11 @@ MIND.front = (function() {
     MIND.timeIt(function() {
       refresh()
     })
+  }
+
+  function toggleLoadLocal() {
+    var selected_source = $("#load-source-select").val()
+    $("#load-source-file")[(selected_source === "local") ? "show" : "hide"]()
   }
 
   function getCurrentPath() {
@@ -166,6 +235,8 @@ MIND.front = (function() {
 
   function displayFragments() {
 
+    MIND.log("displayFragments triggered.")
+
     var filtered_fragments = filterFragments()
     var current_time = Date.now()
     var count = filtered_fragments.length
@@ -220,7 +291,6 @@ MIND.front = (function() {
 
     MIND.log("extract | fragment_count, MIND.current_user:", fragment_count, MIND.current_user)
     // First remove any extraction modal previously created
-    hideExtractionModal(true)
 
     var extraction_modal_content = MIND.render("modal_dialog_tmpl", {
       modal_id: modal_id,
@@ -236,36 +306,64 @@ MIND.front = (function() {
       button_id: "mind-extract-submit"
     })
 
-    $("#content").append(extraction_modal_content)
+    showModal(modal_id, extraction_modal_content)
+  }
+
+  function showModal(modal_id, modal_content) {
+    hideModal(modal_id, true)
+    $("#content").append(modal_content)
     $("#" + modal_id).modal("show")
   }
 
   function loadConfirm() {
-    checkStorageStatus(function (storage_status) {
-
+    checkStorageStatus(function (errors, storage_status) {
+      MIND.log("loadConfirm | storage_status:", storage_status)
+      var modal_id = containers.load_modal_id
       var load_modal_content = MIND.render("modal_dialog_tmpl", {
         modal_id: modal_id,
-        title: "Load and merge stored memory",
+        title: "Load memory",
         body: MIND.render("load_input_tmpl", {
-          count: fragment_count,
-          password_requirements: 
-            printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
-          remote_dropbox: false,
-          remote_mind: (typeof(MIND.current_user) === "string")
+          remote_dropbox: storage_status.remote_dropbox,
+          remote_mind: storage_status.remote_mind
         }),
-        button_label: "Extract now",
-        button_id: "mind-extract-submit"
+        button_label: "Load now",
+        button_id: "mind-load-submit"
       })
 
-
+      showModal(modal_id, load_modal_content)
     })
+  }
 
+
+  function checkStorageStatus(done) {
+    var source_options = {
+      remote_mind: false,
+      remote_dropbox: false
+    }
+
+    MIND.notify("Checking storage status")
+    if (MIND.current_user && MIND.current_user !== "none") {
+      $.get("/storage/status", function (response) {
+        if (response && response.source_options) {
+          var loaded_source_options = response.source_options
+
+          source_options.remote_mind = loaded_source_options.remote_mind
+          source_options.remote_dropbox = loaded_source_options.remote_dropbox
+          return finalize()
+        }
+        else return finalize()
+      })
+    } else return finalize()
+
+    function finalize() {
+      return done(null, source_options)
+    }
   }
 
   function extractSubmit(event) {
     var enc_pwd = $("#extraction-password").val()
     var storage_selection = $("#extraction-target-select").val()
-    var memory_recall = MIND.Memory.recall()
+    var memory_recall = MIND.Memory.recall(storage_selection)
     var extract_str = JSON.stringify(memory_recall)
     var content_extract
 
@@ -274,6 +372,7 @@ MIND.front = (function() {
     if (enc_pwd && enc_pwd.length) {
       if (passwordValid(enc_pwd, MIND.Memory.LIMITS.enc_pwd_len)) {
         content_extract = sjcl.encrypt(enc_pwd, extract_str)
+        MIND.log("encrypted content_extract:", content_extract)
       }
       else {
         extractConfirm("Error: Password invalid.")
@@ -286,12 +385,12 @@ MIND.front = (function() {
 
     if (content_extract) {
       extract(storage_selection, content_extract)
-      hideExtractionModal()
+      hideModal(containers.extraction_modal_id)
     }
   }
 
-  function hideExtractionModal(remove) {
-    var el_id = "#" + containers.extraction_modal_id
+  function hideModal(modal_id, remove) {
+    var el_id = "#" + modal_id
 
     if (remove) {
       $(el_id).remove()
@@ -384,6 +483,7 @@ MIND.front = (function() {
         dec_text = sjcl.decrypt(enc_pwd, enc_text)
       }
       catch(decryption_error) {
+        MIND.log("decryption_error:", decryption_error)
         MIND.notify("Decryption error (Password provided may be incorrect).")
       }
       finally {

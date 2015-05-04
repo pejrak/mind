@@ -58,6 +58,7 @@ var MIND = (function() {
               text.length > LIMITS.fragment_len[0] && 
               text.length < LIMITS.fragment_len[1]
             )
+
         return {
           pass: passing,
           message: (
@@ -102,25 +103,45 @@ var MIND = (function() {
         updated_at: updated_at,
         updated_at_f: fDate(updated_at),
         path: path,
-        owner: owner,
+        owner: owner
       }
     }
 
-    function merge(fragment) {
-      fragments.push(fragment)
-      // Add to index for searching
-      MIND.index.add({
-        id: fragment.id,
-        path: fragment.path.join(" "),
-        text: fragment.text
+    function fragmentIsUnique(fragment) {
+      var duplicates = fragments.filter(function(compared) {
+        return (compared.id === fragment.id)
       })
+      return (duplicates.length === 0)
     }
 
-    function recall(filter) {
+    function merge(fragment, source) {
+      if (fragmentIsUnique(fragment)) {
+        if (source && (
+            !fragment.load_source || fragment.load_source !== source
+          )
+        ) {
+          fragment.load_source = source
+        }
+        fragments.push(fragment)
+        // Add to index for searching
+        MIND.index.add({
+          id: fragment.id,
+          path: fragment.path.join(" "),
+          text: fragment.text
+        })
+      }
+      else {
+        fragment.duplicate = true
+        MIND.log("duplicate fragment:", fragment)
+      }
+     }
+
+    function recall(source, filter) {
       var extraction = {
             initiated_at: initiated_at,
             extracted_at: Date.now(),
-            owner: current_user
+            owner: current_user,
+            source: (source || "local")
           }
 
       if (filter) {
@@ -149,7 +170,7 @@ var MIND = (function() {
       })
       // Check validity of the fragment
       if (is_valid) {
-        merge(Fragment({ text: text, path: path }))
+        merge(Fragment({ text: text, path: path }), "local")
         return {
           success: true
         }
@@ -199,8 +220,38 @@ var MIND = (function() {
     localStorage.removeItem(mem_pointer)
   }
 
-  function loadMemorySnapshot() {
-    var snapshot_str = localStorage.getItem(mem_pointer)
+  function checkStructure(content) {
+    var parsed_content
+    var parsing_error
+    var is_encrypted
+
+    if (
+      content && typeof(content) === "string" && 
+      content.length
+    ) {
+      try {
+        parsed_content = JSON.parse(content)
+      }
+      catch (error) {
+        parsing_error = error
+      }
+      finally {
+        is_encrypted = (
+          parsed_content && typeof(parsed_content) === "object" &&
+          parsed_content.hasOwnProperty("cipher") && 
+          parsed_content.hasOwnProperty("ct")
+        );
+      }
+    }
+    return {
+      parsing_error: parsing_error,
+      parsed_content: parsed_content,
+      is_encrypted: is_encrypted
+    }
+  }
+
+  function loadMemorySnapshot(provided_str) {
+    var snapshot_str = provided_str || localStorage.getItem(mem_pointer)
 
     MIND.log("loadMemorySnapshot | snapshot_str:", snapshot_str)
     if (
@@ -216,22 +267,36 @@ var MIND = (function() {
         parsing_error = error
       }
       finally {
-        if (snapshot && snapshot.fragments) {
-          snapshot.fragments.forEach(function(fragment) {
-            Memory.merge(fragment)
-          })
-          Memory.initiated_at = snapshot.initiated_at
-          Memory.initiated_at_f = fDate(Memory.initiated_at)
-          MIND.log("snapshot:", snapshot)
-          notify("Loaded memory from local store.")
-
+        if (validSnapshot(snapshot)) {
+          mergeMemory(snapshot)
         }
         else {
-          notify("Unable to load local storage. " + (
+          notify("Unable to load memory. " + (
             parsing_error ? "Memory is corrupt." : ""))
         }
       }
     }
+    else {
+      notify("Memory not merged.")
+    }
+  }
+
+  function validSnapshot(snapshot) {
+    return (
+      snapshot && typeof(snapshot) === "object" && 
+      snapshot.fragments && snapshot.fragments.length
+    )
+  }
+
+  function mergeMemory(snapshot, source) {
+    var source = (source || snapshot.source || "local")
+
+    snapshot.fragments.forEach(function(fragment) {
+      Memory.merge(fragment, source)
+    })
+    Memory.initiated_at = snapshot.initiated_at
+    Memory.initiated_at_f = fDate(Memory.initiated_at)
+    saveMemorySnapshot()
   }
 
   function log() {
@@ -279,7 +344,7 @@ var MIND = (function() {
         // Introduce the data as local variables using with(){}
         "with(obj){p.push('" +
        
-        // Convert the template into pure JavaScript
+        // Convert the template into pure J[1:23:57 PM] Matthew Perkins: so conneccted vpn to HK and it worksavaScript
         str
           .replace(/[\r\t\n]/g, " ")
           .split("{").join("\t")
@@ -320,7 +385,10 @@ var MIND = (function() {
     fromBase: fromBase,
     Memory: Memory,
     current_user: current_user,
+    checkStructure: checkStructure,
     loadMemorySnapshot: loadMemorySnapshot,
+    mergeMemory: mergeMemory,
+    validSnapshot: validSnapshot,
     saveMemorySnapshot: saveMemorySnapshot,
     checkCurrentUser: checkCurrentUser
   }

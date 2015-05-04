@@ -21,6 +21,10 @@ body {
 .righter {
   float: right;
 }
+
+.full-text {
+  white-space: pre-line;
+}
 /*
 .mind-fragment {
   padding: 1em;

@@ -9,7 +9,7 @@ script#memory_fragments_list_tmpl(type="text/html")
 script#memory_fragment_tmpl(type="text/html")
   .mind-fragment.list-group-item(id="fragment_{$id}", data-path="{$path.join('|')}") 
     .mind-fragment-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
-    .mind-fragment-text {$text}
+    .mind-fragment-text.full-text {$text}
     .mind-fragment-path.righter {$path}
     .liner
 
@@ -32,7 +32,7 @@ script#memory_path_select_option_tmpl(type="text/html")
 script#extraction_input_tmpl(type="text/html")
   label Encryption password (Leave empty for no encryption)
     input#extraction-password.form-control(type="password")
-  p.small#extraction-password-requirements(style="white-space: pre-line;") {$password_requirements} 
+  p.small#extraction-password-requirements.full-text {$password_requirements} 
   .clearer
   label Select storage option
     select#extraction-target-select.form-control
@@ -41,16 +41,14 @@ script#extraction_input_tmpl(type="text/html")
       option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
 
 script#load_input_tmpl(type="text/html")
-  label Encryption password (Leave empty for no encryption)
-    input#extraction-password.form-control(type="password")
-  p.small#extraction-password-requirements(style="white-space: pre-line;") {$password_requirements} 
-  .clearer
-  label Select storage option
-    select#extraction-target-select.form-control
+  p.small Content loaded from selected source will be merged with current content. If you wish, you can clean memory first.
+  label Select source
+    select#load-source-select.form-control
       option(value="local", selected) Upload (local)
       option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
       option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
-
+  .clearer
+  input.form-control#load-source-file(type="file")
 
 script#modal_dialog_tmpl(type="text/html")
   .modal.fade(id="{$modal_id}")
