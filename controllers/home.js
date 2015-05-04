@@ -10,8 +10,34 @@ module.exports = function (MIND) {
   }, { no_auth: true })
 
   MIND.route.get('/profile', function (req, res) {
-    res.send({ message: "This will be a profile view." })
-  }, { no_auth: true })
+    res.send({
+      profile: req.current_user
+    })
+  })
+
+  MIND.route.post('/profile/update', function (req, res) {
+    var storage_options = {
+      storage_key: req.body.key,
+      storage_secret: req.body.secret,
+    }
+
+    if (MIND.storage.storageOptionsValid(storage_options)) {
+      var email = req.current_user.email
+      MIND.user.assignToRecord(email, storage_options, function(errors) {
+        LOG("profile update | errors, storage_options:", errors, storage_options)
+        res.send({
+          message: (
+            errors ? 
+              "Unable to update profile options." : 
+              "Profile update complete."
+            )
+        })
+      })
+    }
+    else {
+      res.send({message: "Invalid storage options."})
+    }
+  })
 
   MIND.route.post('/store/:storage_type', function (req, res) {
     var extract = req.body.extract
@@ -21,6 +47,7 @@ module.exports = function (MIND) {
     if (user_email) {
       MIND.storage.save({
         user_email: user_email,
+        user_record: req.current_user,
         storage_type: storage_type,
         content: extract
       }, function (error) {

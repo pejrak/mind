@@ -40,6 +40,26 @@ script#extraction_input_tmpl(type="text/html")
       option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
       option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
 
+script#extraction_input_tmpl(type="text/html")
+  label Encryption password (Leave empty for no encryption)
+    input#extraction-password.form-control(type="password")
+  p.small#extraction-password-requirements.full-text {$password_requirements} 
+  .clearer
+  label Select storage option
+    select#extraction-target-select.form-control
+      option(value="local", selected) Download (local)
+      option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
+      option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
+
+
+script#profile_input_tmpl(type="text/html")
+  h4 Remote storage options (Dropbox)
+  label Storage key
+    input#mind-storage-key.form-control(type="text", value="{$storage_key}")
+  .clearer
+  label Storage secret
+    input#mind-storage-secret.form-control(type="text", value="{$storage_secret}")
+
 script#load_input_tmpl(type="text/html")
   p.small Content loaded from selected source will be merged with current content. If you wish, you can clean memory first.
   label Select source

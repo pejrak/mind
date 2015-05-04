@@ -36,7 +36,7 @@ html
           ul.nav.navbar-nav#user-operators
             li
               - if (current_user)
-                a(href="/profile")  (#{current_user.email})
+                a.mind-profile(href="#profile")  (#{current_user.email})
               - else
                 a(href="/login") Login
             li

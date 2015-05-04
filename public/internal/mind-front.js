@@ -3,6 +3,7 @@ MIND.front = (function() {
   var containers = {
     extraction_modal_id: "mind-extraction-modal",
     load_modal_id: "mind-load-modal",
+    profile_modal_id: "mind-profile-modal"
   }
 
   // Initialize listeners
@@ -10,6 +11,7 @@ MIND.front = (function() {
 
     $("#memory-submit").click(submitFragment)
     $("#memory-search").on("input", searchMemory)
+    $(".mind-profile").click(showProfile)
 
     // Dynamic listeners
     $("body").on("click", "#memory-extract-link", extractConfirm)
@@ -18,12 +20,26 @@ MIND.front = (function() {
     $("body").on("click", "#mind-load-submit", loadSubmit)
     $("body").on("click", "#memory-load", loadConfirm)
     $("body").on("change", "#load-source-select", toggleLoadLocal)
+    
+    $("body").on("click", "#mind-profile-update", profileConfirm)
 
     MIND.index = initSearch()
     displayPathSelections()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     refresh()
+  }
+
+  function profileConfirm() {
+    var storage_options = {
+      key: $("#mind-storage-key").val(),
+      secret: $("#mind-storage-secret").val()
+    }
+   
+    $.post("/profile/update", storage_options, function(response) {
+      hideModal(containers.profile_modal_id)
+      MIND.notify(response.message)
+    })
   }
 
   function loadSubmit() {
@@ -66,6 +82,28 @@ MIND.front = (function() {
     $("#memory-search").val("")
   }
 
+  function showProfile() {
+    var modal_id = containers.profile_modal_id
+
+    $.get("/profile", function(response) {
+      if (response && response.profile) {
+        var profile_modal_content = MIND.render("modal_dialog_tmpl", {
+          modal_id: modal_id,
+          title: "My profile (" + response.profile.email + ")",
+          body: MIND.render("profile_input_tmpl", response.profile),
+          button_label: "Update now",
+          button_id: "mind-profile-update"
+        })    
+        showModal(modal_id, profile_modal_content)      
+      }
+      else {
+        MIND.notify(
+          "Error: Unable to load profile (May need to refresh or login again)."
+        )
+      }
+    })
+  }
+
 
 
   function loadStoredMemory(source, done) {
@@ -86,13 +124,14 @@ MIND.front = (function() {
   }
 
   function loadLocalFile(done) {
-    var content
-    var selected_file = $("#load-source-file").val()
+    var selected_file = document.getElementById("load-source-file").files[0]
 
-    MIND.log("loadLocalFile | selected_file:", selected_file)
     if (selected_file) {
-      MIND.notify("File selected.")
-      return done()
+      var reader = new FileReader()
+      reader.onload = function (event) {
+        return done(null, event.target.result)
+      }
+      reader.readAsText(selected_file)
     }
     else {
       MIND.notify("No file is selected.")
@@ -217,13 +256,11 @@ MIND.front = (function() {
   }
 
   function displayPathSelections() {
-    var selector
-
     // First render the selector
     $("#memory-path-selection-container").html(
       MIND.render("memory_path_selection_tmpl")
     )
-    selector = $("#memory-path-select")
+    var selector = $("#memory-path-select")
     // Now render options for the selector
     MIND.Memory.paths.forEach(function(path) {
       selector.append(MIND.render("memory_path_select_option_tmpl", {
@@ -234,9 +271,6 @@ MIND.front = (function() {
   }
 
   function displayFragments() {
-
-    MIND.log("displayFragments triggered.")
-
     var filtered_fragments = filterFragments()
     var current_time = Date.now()
     var count = filtered_fragments.length
@@ -254,7 +288,6 @@ MIND.front = (function() {
     $("#memory-fragments-container").html(fragment_list)
     $("#memory-fragments-list").html(fragments_content)
     $(".mind-fragment-text").linkify()
-
   }
 
   function displayMemoryOperators() {
@@ -288,6 +321,10 @@ MIND.front = (function() {
     var modal_title = (typeof(message) === "string" ? message : (
       "Extract memory fragments (" + fragment_count + ")"
     ))
+    var front_auth = (
+          typeof(MIND.current_user) === "string" && 
+          MIND.current_user !== "none"
+        )
 
     MIND.log("extract | fragment_count, MIND.current_user:", fragment_count, MIND.current_user)
     // First remove any extraction modal previously created
@@ -300,7 +337,7 @@ MIND.front = (function() {
         password_requirements: 
           printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
         remote_dropbox: false,
-        remote_mind: (typeof(MIND.current_user) === "string")
+        remote_mind: front_auth
       }),
       button_label: "Extract now",
       button_id: "mind-extract-submit"
