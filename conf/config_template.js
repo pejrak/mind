@@ -4,7 +4,6 @@ module.exports = {
   // Environment specific
   production: {
     port: 3000,
-    // Storage folder for temporary fragment extractions
     storage_dir: "/tmp"
   },
   development: {
@@ -12,5 +11,9 @@ module.exports = {
     storage_dir: "/tmp"
   },
   // Non-env specific
-  secret: 'addyoursecrethere'
+  secret: 'XXXXX',
+  google_oauth: {
+    key: 'XXXXX',
+    secret: 'XXXXX'
+  }
 }
