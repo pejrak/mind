@@ -39,6 +39,13 @@ module.exports = function (MIND) {
     }
   })
 
+  MIND.route.post('/check_path_component', function (req, res) {
+    var query = req.body.query
+    MIND.paths.checkIfExists(query, function (error, exists) {
+      
+    })
+  }, { no_auth: true })
+
   MIND.route.post('/store/:storage_type', function (req, res) {
     var extract = req.body.extract
     var storage_type = req.params.storage_type

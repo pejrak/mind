@@ -44,12 +44,11 @@ var MIND = (function() {
 
 
   var Memory = (function() {
-
     var LIMITS = {
-      fragment_len: [2, 1000],
+      fragment_len: [2, 5000],
       enc_pwd_len: [2, 100]
     }
-    var BASIC_PATHS = [["temporary"]]
+    var BASIC_PATHS = [["temporary"], ["new"]]
     var initiated_at = Date.now()
     var validate = {
       fragment: function(text) {
@@ -103,6 +102,7 @@ var MIND = (function() {
         updated_at: updated_at,
         updated_at_f: fDate(updated_at),
         path: path,
+        memorized: true,
         owner: owner
       }
     }

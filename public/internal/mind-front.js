@@ -3,7 +3,8 @@ MIND.front = (function() {
   var containers = {
     extraction_modal_id: "mind-extraction-modal",
     load_modal_id: "mind-load-modal",
-    profile_modal_id: "mind-profile-modal"
+    profile_modal_id: "mind-profile-modal",
+    path_creation_modal_id: "mind-path-creation-modal"
   }
 
   // Initialize listeners
@@ -20,14 +21,88 @@ MIND.front = (function() {
     $("body").on("click", "#mind-load-submit", loadSubmit)
     $("body").on("click", "#memory-load", loadConfirm)
     $("body").on("change", "#load-source-select", toggleLoadLocal)
-    
+    $("body").on("change", "#memory-path-select", triggerPathSelection)
     $("body").on("click", "#mind-profile-update", profileConfirm)
+    $("body").on("input", "#path-component-input", checkPathComponent)
+    $("body").on("click", "#path-component-confirm", confirmPathComponent)
 
     MIND.index = initSearch()
     displayPathSelections()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     refresh()
+  }
+
+  function confirmPathComponent() {
+    var path_component_str = $("#path-component-input").val()
+    var path_components = getNewPathComponents()
+
+    path_components.push(path_component_str)
+
+    
+
+  }
+
+  function getNewPathComponents() {
+    var components = []
+    var comp_elements = $(".mind-path-component", "#mind-path-components")
+
+    $.each(comp_elements, function(i, element) {
+      var path_component_str = $(element).text()
+
+      components.push(path_component_str)
+    })
+    return components
+  }
+
+  function checkPathComponent() {
+    var input_str = $("#path-component-input").val()
+    
+    $("#path-component-confirm").prop("disabled", true)
+    if (input_str && input_str.length > 2) {
+      var current_components = getNewPathComponents()
+      var component_on_path = current_components.indexOf(input_str) > -1
+      var component_limit_reach = current_components.length > 2
+
+      if (component_on_path || component_limit_reach) {
+        MIND.log("checkPathComponent | component already added.")
+      }
+      else {
+        MIND.timeIt(function() {
+          confirmPathComponentAvailable(input_str, function(response) {
+            if (response && response.available) {
+              $("#path-component-confirm").prop("disabled", false)
+            }
+          })  
+        })
+      }
+    }
+  }
+
+  function confirmPathComponentAvailable(path_component, done) {
+    $.post("/check_path_component", {
+      query: path_component
+    }, done)
+  }
+
+  function triggerPathSelection() {
+    var path_selection = $("#memory-path-select").val()
+
+    MIND.log("triggerPathSelection | path_selection:", path_selection)
+    if (path_selection === "new") showPathCreation()
+  }
+
+  function showPathCreation() {
+    var modal_id = containers.path_creation_modal_id
+    var path_modal_content = MIND.render("modal_dialog_tmpl", {
+          modal_id: modal_id,
+          title: "New mind path",
+          body: MIND.render("path_creation_input_tmpl", {}),
+          button_label: "Add path now",
+          button_id: "mind-path-create"
+        })
+
+    showModal(modal_id, path_modal_content)  
   }
 
   function profileConfirm() {
@@ -283,7 +358,10 @@ MIND.front = (function() {
 
     MIND.Memory.on_display = filtered_fragments
     filtered_fragments.forEach(function(fragment) {
-      fragments_content += MIND.render("memory_fragment_tmpl", fragment)
+      fragment.memorized = (fragment.memorized === true ? true : false)
+      fragments_content = (
+        MIND.render("memory_fragment_tmpl", fragment) + fragments_content
+      )
     })
     $("#memory-fragments-container").html(fragment_list)
     $("#memory-fragments-list").html(fragments_content)

@@ -13,6 +13,12 @@ script#memory_fragment_tmpl(type="text/html")
     .mind-fragment-path.righter {$path}
     .liner
 
+script#memory_fragment_toolbar_tmpl(type="text/html")
+  .mind-fragment-operators.btn-group.btn-group-sm(role="group")
+    button.mind-fragment-ops-forget.btn.btn-default(style="display:{$memorized?'block':'none'};") Forget
+      span.glyphicon.glyphicon-remove
+    button.mind-fragment-ops-remember.btn.btn-default(style="display:{$memorized?'none':'block'};") Remember
+      span.glyphicon.glyphicon-asterisk
 
 script#memory_fragments_extract_tmpl(type="text/html")
   li#memory-extract
@@ -39,6 +45,15 @@ script#extraction_input_tmpl(type="text/html")
       option(value="local", selected) Download (local)
       option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
       option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
+
+script#path_creation_input_tmpl(type="text/html")
+  //- label(for="path-component-input") Path component
+  .input-group
+    input.form-control#path-component-input(type="text", placeholder="(eg: information)")
+    span.input-group-btn
+      button.btn.btn-default#path-component-confirm(disabled) Add
+  .clearer
+  #mind-path-components -- Empty --
 
 script#extraction_input_tmpl(type="text/html")
   label Encryption password (Leave empty for no encryption)
