@@ -47,13 +47,16 @@ script#extraction_input_tmpl(type="text/html")
       option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
 
 script#path_creation_input_tmpl(type="text/html")
-  //- label(for="path-component-input") Path component
   .input-group
     input.form-control#path-component-input(type="text", placeholder="(eg: information)")
     span.input-group-btn
       button.btn.btn-default#path-component-confirm(disabled) Add
   .clearer
-  #mind-path-components -- Empty --
+  ul#mind-path-components.nav.nav-pills
+
+script#new_path_component_tmpl(type="text/html")
+  li(role="presentation").active.mind-path-component
+    a(href="#") {$name}
 
 script#extraction_input_tmpl(type="text/html")
   label Encryption password (Leave empty for no encryption)

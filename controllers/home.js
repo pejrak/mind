@@ -41,9 +41,23 @@ module.exports = function (MIND) {
 
   MIND.route.post('/check_path_component', function (req, res) {
     var query = req.body.query
-    MIND.paths.checkIfExists(query, function (error, exists) {
-      
-    })
+
+    if (query && query.length) {
+      MIND.paths.checkIfExists(query, finalize)     
+    }
+    else finalize()
+    
+    function finalize(error, exists) {
+
+      res.send({
+        message: (
+          (error || !exists) ? 
+            "Unable to find matching path component." : 
+            "Found matching path component"
+        ),
+        success: (!error && exists)
+      })
+    }
   }, { no_auth: true })
 
   MIND.route.post('/store/:storage_type', function (req, res) {

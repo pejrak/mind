@@ -21,26 +21,60 @@ MIND.front = (function() {
     $("body").on("click", "#mind-load-submit", loadSubmit)
     $("body").on("click", "#memory-load", loadConfirm)
     $("body").on("change", "#load-source-select", toggleLoadLocal)
-    $("body").on("change", "#memory-path-select", triggerPathSelection)
+    $("body").on("click", "#memory-path-new", showPathCreation)
     $("body").on("click", "#mind-profile-update", profileConfirm)
     $("body").on("input", "#path-component-input", checkPathComponent)
     $("body").on("click", "#path-component-confirm", confirmPathComponent)
+    $("body").on("click", ".mind-path-component", removePathComponent)
+    $("body").on("click", "#mind-path-create", createPath)
+    $("body").on("change", "#memory-path-select", displayFragments)
 
     MIND.index = initSearch()
-    displayPathSelections()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     refresh()
   }
 
-  function confirmPathComponent() {
+  function createPath() {
+    MIND.addPath(getNewPathComponents())
+    MIND.saveMemorySnapshot()
+    hideModal(containers.path_creation_modal_id)
+    refresh()
+  }
+
+  function removePathComponent(event) {
+    // First, remove the element for path component
+    $(event.currentTarget).remove()
+
+    // Get current path components length
+    var len = getNewPathComponents().length
+
+    // Now decide if submittal should be allowed
+    $("#mind-path-create").prop("disabled", (len === 0))
+  }
+
+  function confirmPathComponent(event) {
+    var confirmation_button = event.currentTarget
     var path_component_str = $("#path-component-input").val()
     var path_components = getNewPathComponents()
 
     path_components.push(path_component_str)
-
     
+    $("#mind-path-components").html(renderNewPathComponents(path_components))
+    $(confirmation_button).prop("disabled", true)
+    $("#mind-path-create").prop("disabled", false)
+  }
 
+  function renderNewPathComponents(components) {
+    var content = ""
+
+    components.forEach(function(component) {
+      content += MIND.render("new_path_component_tmpl", {
+        name: component
+      })
+    })
+
+    return content
   }
 
   function getNewPathComponents() {
@@ -48,7 +82,7 @@ MIND.front = (function() {
     var comp_elements = $(".mind-path-component", "#mind-path-components")
 
     $.each(comp_elements, function(i, element) {
-      var path_component_str = $(element).text()
+      var path_component_str = $(element).text().trim()
 
       components.push(path_component_str)
     })
@@ -57,7 +91,7 @@ MIND.front = (function() {
 
   function checkPathComponent() {
     var input_str = $("#path-component-input").val()
-    
+
     $("#path-component-confirm").prop("disabled", true)
     if (input_str && input_str.length > 2) {
       var current_components = getNewPathComponents()
@@ -70,33 +104,34 @@ MIND.front = (function() {
       else {
         MIND.timeIt(function() {
           confirmPathComponentAvailable(input_str, function(response) {
-            if (response && response.available) {
-              $("#path-component-confirm").prop("disabled", false)
-            }
+            MIND.log("checkPathComponent | response:", response)
+            MIND.notify(response.message)
+            $("#path-component-confirm").prop("disabled", !response.success)
           })  
-        })
+        }, 500)
       }
     }
   }
 
   function confirmPathComponentAvailable(path_component, done) {
+    MIND.log("confirmPathComponentAvailable | path_component:", path_component)
     $.post("/check_path_component", {
       query: path_component
     }, done)
   }
 
-  function triggerPathSelection() {
+  function getPathSelection() {
     var path_selection = $("#memory-path-select").val()
 
     MIND.log("triggerPathSelection | path_selection:", path_selection)
-    if (path_selection === "new") showPathCreation()
+    return path_selection
   }
 
   function showPathCreation() {
     var modal_id = containers.path_creation_modal_id
     var path_modal_content = MIND.render("modal_dialog_tmpl", {
           modal_id: modal_id,
-          title: "New mind path",
+          title: "New path",
           body: MIND.render("path_creation_input_tmpl", {}),
           button_label: "Add path now",
           button_id: "mind-path-create"
@@ -250,14 +285,17 @@ MIND.front = (function() {
 
   function toggleLoadLocal() {
     var selected_source = $("#load-source-select").val()
-    $("#load-source-file")[(selected_source === "local") ? "show" : "hide"]()
+    $("#load-source-file")[selected_source === "local" ? "show" : "hide"]()
   }
 
   function getCurrentPath() {
-    var path_selector = $("#mind-path-select")
+    var path_selected = $("#memory-path-select").val()
+
+    MIND.log("getCurrentPath | path:", path_selected)
+
     return (
-      path_selector && path_selector.length ? 
-        path_selector.val().split("|") : MIND.Memory.paths[0]
+      path_selected ? 
+        path_selected.split("|") : MIND.Memory.paths[0]
     )
   }
 
@@ -280,7 +318,7 @@ MIND.front = (function() {
       MIND.saveMemorySnapshot()
       cleanFragmentInput()
     }
-    refresh()
+    refresh(true)
   }
 
   function filterFragments() {
@@ -289,8 +327,8 @@ MIND.front = (function() {
     var fragments = MIND.Memory.fragments || []
 
     fragments.forEach(function(fragment) {
-      var path_comparison = comparePaths(fragment.path, getCurrentPath())
-      // MIND.log("path_comparison:", path_comparison)
+      var path_comparison = MIND.comparePaths(fragment.path, getCurrentPath())
+
       if (!path_comparison.diff_left.length) {
         filtered.push(fragment)
       }
@@ -309,13 +347,6 @@ MIND.front = (function() {
       filtered = matching
     }
     return filtered
-  }
-
-  function comparePaths(child_path, parent_path) {
-    return {
-      diff_right: $(parent_path).not(child_path).get(),
-      diff_left: $(child_path).not(parent_path).get()
-    }
   }
 
   function pathName(path) {
@@ -607,9 +638,12 @@ MIND.front = (function() {
     }
   }
 
-  function refresh() {
+  function refresh(partial) {
+    if (!partial) {
+      displayPathSelections()
+    }
+
     displayFragments()
-    displayPathSelections()
     displayMemoryOperators()
     displaySearch()
   }

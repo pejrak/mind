@@ -48,7 +48,8 @@ var MIND = (function() {
       fragment_len: [2, 5000],
       enc_pwd_len: [2, 100]
     }
-    var BASIC_PATHS = [["temporary"], ["new"]]
+    var fragments = []
+    var BASIC_PATHS = [["temporary"]]
     var initiated_at = Date.now()
     var validate = {
       fragment: function(text) {
@@ -83,7 +84,6 @@ var MIND = (function() {
         }
       }
     }    
-    var fragments = []
 
     function Fragment(options) {
       var text = options.text
@@ -140,6 +140,7 @@ var MIND = (function() {
       var extraction = {
             initiated_at: initiated_at,
             extracted_at: Date.now(),
+            paths: Memory.paths,
             owner: current_user,
             source: (source || "local")
           }
@@ -197,6 +198,19 @@ var MIND = (function() {
       paths: BASIC_PATHS.slice(0)
     }
   } ())
+
+  function addPath(path) {
+    var current_path_dupes = Memory.paths.filter(function(path_rec) {
+      var comparison = comparePaths(path_rec, path)
+      
+      return (
+        comparison.diff_right.length === 0 && comparison.diff_left.length === 0
+      )
+    })
+
+    MIND.log("addPath | path:", path)
+    return (current_path_dupes.length ? false : Memory.paths.push(path))
+  }
 
 
   function saveMemorySnapshot() {
@@ -276,9 +290,6 @@ var MIND = (function() {
         }
       }
     }
-    else {
-      notify("Memory not merged.")
-    }
   }
 
   function validSnapshot(snapshot) {
@@ -288,12 +299,21 @@ var MIND = (function() {
     )
   }
 
+  function comparePaths(child_path, parent_path) {
+    return {
+      diff_right: $(parent_path).not(child_path).get(),
+      diff_left: $(child_path).not(parent_path).get()
+    }
+  }  
+
   function mergeMemory(snapshot, source) {
     var source = (source || snapshot.source || "local")
 
     snapshot.fragments.forEach(function(fragment) {
       Memory.merge(fragment, source)
     })
+
+    snapshot.paths.forEach(addPath)
     Memory.initiated_at = snapshot.initiated_at
     Memory.initiated_at_f = fDate(Memory.initiated_at)
     saveMemorySnapshot()
@@ -384,8 +404,10 @@ var MIND = (function() {
     toBase: toBase,
     fromBase: fromBase,
     Memory: Memory,
+    addPath: addPath,
     current_user: current_user,
     checkStructure: checkStructure,
+    comparePaths: comparePaths,
     loadMemorySnapshot: loadMemorySnapshot,
     mergeMemory: mergeMemory,
     validSnapshot: validSnapshot,
