@@ -313,7 +313,7 @@ var MIND = (function() {
       Memory.merge(fragment, source)
     })
 
-    snapshot.paths.forEach(addPath)
+    if (snapshot.paths) snapshot.paths.forEach(addPath)
     Memory.initiated_at = snapshot.initiated_at
     Memory.initiated_at_f = fDate(Memory.initiated_at)
     saveMemorySnapshot()
