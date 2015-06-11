@@ -32,7 +32,13 @@ MIND.front = (function() {
     MIND.index = initSearch()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
+
+    applyUI()
     refresh()
+  }
+
+  function applyUI() {
+    autosize($(".expandable"))
   }
 
   function createPath() {
