@@ -80,6 +80,7 @@ MIND.front = (function() {
 
       if (success) {
         MIND.notify("Fragment has been reassigned to the selected path.")
+        MIND.saveMemorySnapshot()
         refresh(true)
       }
       else MIND.notify("Fragment path reassignment failed.")
