@@ -12,7 +12,8 @@ MIND.front = (function() {
 
     $("#memory-submit").click(submitFragment)
     $(".mind-profile" ).click(showProfile)
-    $("#memory-display-forgotten").click(toggleForgotten)
+    $("#memory-display-forgotten").click(togglePreference)
+    $("#memory-search-all").click(togglePreference)
 
     
 
@@ -42,7 +43,7 @@ MIND.front = (function() {
     refresh()
   }
 
-  function toggleForgotten(event) {
+  function togglePreference(event) {
     var button = $(event.currentTarget)
     var is_active
 
@@ -403,27 +404,33 @@ MIND.front = (function() {
 
   function filterFragments() {
     var query = $("#memory-search").val()
+    var query_defined = (query && query.length > 1)
     var include_forgotten = $("#memory-display-forgotten").hasClass("active")
     var filtered = []
     var fragments = MIND.Memory.fragments || []
     var current_path = getCurrentPath()
+    var search_all = $("#memory-search-all").hasClass("active")
 
     fragments.forEach(function(fragment) {
-      if (fragment.path.length >= current_path.length) {
-        var path_comparison = MIND.comparePaths(fragment.path, current_path)
+      var fragment_in_mem_scope = (
+        include_forgotten || fragment.memorized
+      )
+      var path_length_match_possible = (
+        fragment.path.length >= current_path.length
+      )
 
-        MIND.log("fragment, path_comparison, current_path:", fragment, path_comparison, current_path)
-        if (
-          path_comparison.inclusive && (
-            include_forgotten || fragment.memorized
-          )
-        ) {
-          filtered.push(fragment)
-        }        
+      if (search_all && query_defined && fragment_in_mem_scope) {
+        filtered.push(fragment)
+      }
+      else if (
+        path_length_match_possible && 
+        MIND.comparePaths(fragment.path, current_path).inclusive
+      ) {
+        filtered.push(fragment)
       }
     })
     MIND.Memory.on_path = filtered.slice(0)
-    if (query && query.length > 1) {
+    if (query_defined) {
       var hits = MIND.index.search(query)
       var matching_ids = hits.map(function(hit) {
         return parseInt(hit.ref)
