@@ -406,16 +406,20 @@ MIND.front = (function() {
     var include_forgotten = $("#memory-display-forgotten").hasClass("active")
     var filtered = []
     var fragments = MIND.Memory.fragments || []
+    var current_path = getCurrentPath()
 
     fragments.forEach(function(fragment) {
-      var path_comparison = MIND.comparePaths(fragment.path, getCurrentPath())
+      if (fragment.path.length >= current_path.length) {
+        var path_comparison = MIND.comparePaths(fragment.path, current_path)
 
-      if (
-        !path_comparison.diff_left.length && (
-          include_forgotten || fragment.memorized
-        )
-      ) {
-        filtered.push(fragment)
+        MIND.log("fragment, path_comparison, current_path:", fragment, path_comparison, current_path)
+        if (
+          path_comparison.inclusive && (
+            include_forgotten || fragment.memorized
+          )
+        ) {
+          filtered.push(fragment)
+        }        
       }
     })
     MIND.Memory.on_path = filtered.slice(0)
@@ -472,9 +476,7 @@ MIND.front = (function() {
 
     current_paths.forEach(function(path, path_index) {
       var path_comparison = MIND.comparePaths(path, fragment.path)
-      var same_path = (
-        path_comparison.diff_right === 0 && path_comparison.diff_left === 0
-      )
+      var same_path = path_comparison.identical
       var attribs = {
         path_name: pathName(path),
         path_key: pathKey(path),

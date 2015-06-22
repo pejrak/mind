@@ -254,9 +254,7 @@ var MIND = (function() {
     var current_path_dupes = Memory.paths.filter(function(path_rec) {
       var comparison = comparePaths(path_rec, path)
       
-      return (
-        comparison.diff_right.length === 0 && comparison.diff_left.length === 0
-      )
+      return comparison.identical
     })
 
     MIND.log("addPath | path:", path)
@@ -343,6 +341,17 @@ var MIND = (function() {
     }
   }
 
+  function intersection(arrays) {
+    var result = arrays.shift().reduce(function(res, v) {
+      if (res.indexOf(v) === -1 && arrays.every(function(a) {
+        return a.indexOf(v) !== -1
+      })) res.push(v)
+      return res
+    }, [])
+
+    return result
+  }
+
   function validSnapshot(snapshot) {
     return (
       snapshot && typeof(snapshot) === "object" && 
@@ -351,9 +360,17 @@ var MIND = (function() {
   }
 
   function comparePaths(child_path, parent_path) {
+
+    var intersect = intersection([child_path, parent_path])
+    var inclusive = (intersect.length === parent_path.length)
+    var identical = inclusive && (child_path.length === intersect.length)
+
     return {
-      diff_right: $(parent_path).not(child_path).get(),
-      diff_left: $(child_path).not(parent_path).get()
+      intersect: intersect,
+      inclusive: inclusive,
+      identical: identical,
+      child_path: child_path,
+      parent_path: parent_path
     }
   }  
 
