@@ -4,8 +4,20 @@ MIND.front = (function() {
     extraction_modal_id: "mind-extraction-modal",
     load_modal_id: "mind-load-modal",
     profile_modal_id: "mind-profile-modal",
-    path_creation_modal_id: "mind-path-creation-modal"
+    path_creation_modal_id: "mind-path-creation-modal",
+    pref_include_forgotten: "memory-display-forgotten",
+    pref_search_all: "memory-search-all",
   }
+  var PREFERENCES = [{
+      name: "search_all",
+      defaults: false,
+      current: undefined
+    }, {
+      name: "include_forgotten",
+      defaults: false,
+      current: undefined
+    }
+  ]
 
   // Initialize listeners
   function init() {
@@ -43,11 +55,55 @@ MIND.front = (function() {
     refresh()
   }
 
+  function getPreferences() {
+    PREFERENCES.forEach(function(preference, pref_idx) {
+      if (preference.name) {
+        var target = getPreferenceTarget(preference.name)
+
+        if (target.length) {
+          preference.current = target.hasClass("active")
+        }
+      }
+    })
+
+    return PREFERENCES
+  }
+
+  function getPreferenceTarget(preference_name) {
+    var target_container_name = ("pref_" + preference_name)
+    var target_container = "#" + containers[target_container_name]
+
+    return $(target_container)
+  }
+
+  function applyPreferences(prefs) {
+    prefs.forEach(function(preference) {
+      PREFERENCES.forEach(function(def_pref, def_idx) {
+        if (def_pref.name === preference.name) {
+          var load_val = preference.current
+          var target = getPreferenceTarget(preference.name)
+
+          if (target.length) {
+            var current_val = target.hasClass("active")
+            var prefered_val = preference.current
+
+            if (current_val !== prefered_val) {
+              target[prefered_val ? "addClass" : "removeClass"]("active")
+            }
+          }
+
+        }
+      })
+    })
+  }  
+
   function togglePreference(event) {
     var button = $(event.currentTarget)
-    var is_active
+    var is_active, current_preferences
 
     button.toggleClass("active")
+    MIND.saveMemorySnapshot()
+
     refresh(true)
   }
 
@@ -778,6 +834,8 @@ MIND.front = (function() {
 
   return {
     init: init,
+    getPreferences: getPreferences,
+    applyPreferences: applyPreferences
   }
 } ())
 

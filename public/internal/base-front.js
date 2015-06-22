@@ -132,7 +132,6 @@ var MIND = (function() {
       }
       else {
         fragment.duplicate = true
-        MIND.log("duplicate fragment:", fragment)
       }
      }
 
@@ -141,6 +140,7 @@ var MIND = (function() {
             initiated_at: initiated_at,
             extracted_at: Date.now(),
             paths: Memory.paths,
+            preferences: MIND.front.getPreferences(),
             owner: current_user,
             source: (source || "local")
           }
@@ -332,6 +332,9 @@ var MIND = (function() {
       finally {
         if (validSnapshot(snapshot)) {
           mergeMemory(snapshot)
+          if (snapshot.preferences) {
+            MIND.front.applyPreferences(snapshot.preferences)
+          }
         }
         else {
           notify("Unable to load memory. " + (
