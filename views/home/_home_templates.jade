@@ -2,9 +2,9 @@ script#notification_tmpl(type="text/html")
   .mind-notification.alert.alert-info(id="{$id}") {$message}
 
 script#memory_fragments_list_tmpl(type="text/html")
-  .list-group
-    .list-group-item#memory-fragments-label {$label}
-    #memory-fragments-list
+  .list-group-item#memory-fragments-label {$label}
+     
+  #memory-fragments-list
 
 script#memory_fragment_tmpl(type="text/html")
   .mind-fragment.list-group-item(id="fragment_{$id}", data-fragment-id="{$id}") 

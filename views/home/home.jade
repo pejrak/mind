@@ -13,12 +13,10 @@ block content
       span.input-group-btn
         button.btn.btn-default#memory-path-new New
   .clearer
-  .panel.panel-default
-    .panel-heading
-      .input-group#memory-search-operators(style="display:none;")
-        input#memory-search.form-control(type="text", placeholder="Search...")
-        span.input-group-btn
-          button.btn.btn-default#memory-display-forgotten Include forgotten
-    #memory-fragments-container
+  .input-group#memory-search-operators
+    input#memory-search.form-control(type="text", placeholder="Search...")
+    span.input-group-btn
+      button.btn.btn-default#memory-display-forgotten Include forgotten
+  #memory-fragments-container.list-group
 
   include _home_templates

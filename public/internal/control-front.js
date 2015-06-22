@@ -14,9 +14,10 @@ MIND.front = (function() {
     $(".mind-profile" ).click(showProfile)
     $("#memory-display-forgotten").click(toggleForgotten)
 
-    $("#memory-search").on("input", searchMemory)
+    
 
     // Dynamic listeners
+    $("body").on("input"  , "#memory-search"          , searchMemory          )
     $("body").on("click"  , "#memory-extract-link"    , extractConfirm        )
     $("body").on("click"  , "#memory-wipe-link"       , wipe                  )
     $("body").on("click"  , "#mind-extract-submit"    , extractSubmit         )
@@ -358,7 +359,7 @@ MIND.front = (function() {
 
   function searchMemory(event) {
     MIND.timeIt(function() {
-      refresh()
+      refresh(true)
     })
   }
 
@@ -763,7 +764,7 @@ MIND.front = (function() {
 
     displayFragments()
     displayMemoryOperators()
-    displaySearch()
+    // displaySearch()
   }
 
   return {
