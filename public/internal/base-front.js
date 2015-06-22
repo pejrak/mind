@@ -83,7 +83,7 @@ var MIND = (function() {
           message: "Text must be unique in path."
         }
       }
-    }    
+    }
 
     function Fragment(options) {
       var text = options.text
@@ -183,10 +183,61 @@ var MIND = (function() {
       }
     }
 
+    function get(fragment_id) {
+      var match      
+      var matches = fragments.filter(function(fragment) {
+        var matching = (fragment.id === fragment_id)
+
+        if (matching) match = fragment
+        return matching
+      })
+
+      return match
+    }
+
+    function repath(fragment, new_path_index) {
+      var path = MIND.Memory.paths[new_path_index]
+      var success
+
+      if (path && path.length) {
+        fragment.path = path
+        success = true
+      }
+      return success
+    }
+
+    function forget(fragment_id) {
+      var fragment = get(fragment_id)
+      var success
+
+      if (fragment) {
+        fragment.memorized = false
+        success = true
+      }
+
+      return success
+    }
+
+    function remember(fragment_id) {
+      var fragment = get(fragment_id)
+      var success
+
+      if (fragment) {
+        fragment.memorized = true
+        success = true
+      }
+
+      return success
+    }
+
     return {
       add: add,
       merge: merge,
+      get: get,
       recall: recall,
+      forget: forget,
+      repath: repath,
+      remember: remember,
       fragments: fragments,
       on_display: [],
       on_path: [],

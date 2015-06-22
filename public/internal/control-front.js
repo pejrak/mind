@@ -11,30 +11,102 @@ MIND.front = (function() {
   function init() {
 
     $("#memory-submit").click(submitFragment)
+    $(".mind-profile" ).click(showProfile)
+    $("#memory-display-forgotten").click(toggleForgotten)
+
     $("#memory-search").on("input", searchMemory)
-    $(".mind-profile").click(showProfile)
 
     // Dynamic listeners
-    $("body").on("click", "#memory-extract-link", extractConfirm)
-    $("body").on("click", "#memory-wipe-link", wipe)
-    $("body").on("click", "#mind-extract-submit", extractSubmit)
-    $("body").on("click", "#mind-load-submit", loadSubmit)
-    $("body").on("click", "#memory-load", loadConfirm)
-    $("body").on("change", "#load-source-select", toggleLoadLocal)
-    $("body").on("click", "#memory-path-new", showPathCreation)
-    $("body").on("click", "#mind-profile-update", profileConfirm)
-    $("body").on("input", "#path-component-input", checkPathComponent)
-    $("body").on("click", "#path-component-confirm", confirmPathComponent)
-    $("body").on("click", ".mind-path-component", removePathComponent)
-    $("body").on("click", "#mind-path-create", createPath)
-    $("body").on("change", "#memory-path-select", displayFragments)
+    $("body").on("click"  , "#memory-extract-link"    , extractConfirm        )
+    $("body").on("click"  , "#memory-wipe-link"       , wipe                  )
+    $("body").on("click"  , "#mind-extract-submit"    , extractSubmit         )
+    $("body").on("click"  , "#mind-load-submit"       , loadSubmit            )
+    $("body").on("click"  , "#memory-load"            , loadConfirm           )
+    $("body").on("change" , "#load-source-select"     , toggleLoadLocal       )
+    $("body").on("click"  , "#memory-path-new"        , showPathCreation      )
+    $("body").on("click"  , "#mind-profile-update"    , profileConfirm        )
+    $("body").on("input"  , "#path-component-input"   , checkPathComponent    )
+    $("body").on("click"  , "#path-component-confirm" , confirmPathComponent  )
+    $("body").on("click"  , ".mind-path-component"    , removePathComponent   )
+    $("body").on("click"  , "#mind-path-create"       , createPath            )
+    $("body").on("click"  , ".mind-fragment-forget"   , forgetFragment        )
+    $("body").on("click"  , ".mind-fragment-remember" , rememberFragment      )
+    $("body").on("click"  , ".fragment-path-option"   , repathFragment        )
+    $("body").on("change" , "#memory-path-select"     , displayFragments      )
 
     MIND.index = initSearch()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
-
     applyUI()
     refresh()
+  }
+
+  function toggleForgotten(event) {
+    var button = $(event.currentTarget)
+    var is_active
+
+    button.toggleClass("active")
+    refresh(true)
+  }
+
+  function forgetFragment(event) {
+    var fragment_el = $(event.currentTarget).parents(".mind-fragment")
+    var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
+    
+    if (fragment_id && fragment_id > 0) {
+      var forgotten = MIND.Memory.forget(fragment_id)
+
+      MIND.notify(
+        forgotten ? "Fragment forgotten." : "Unable to forget matching fragment"
+      )
+      MIND.saveMemorySnapshot()
+      refresh(true)
+    }
+    else {
+      MIND.notify("Unable to extract fragment ID.")
+    }
+  }
+
+  function repathFragment(event) {
+    var target_path_index = parseInt(
+      $(event.currentTarget).attr("data-path-index")
+    )
+    var fragment_el = $(event.currentTarget).parents(".mind-fragment")
+    var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
+    var fragment = MIND.Memory.get(fragment_id)
+
+    if (target_path_index >= 0 && fragment) {
+      var success = MIND.Memory.repath(fragment, target_path_index)
+
+      if (success) {
+        MIND.notify("Fragment has been reassigned to the selected path.")
+        refresh(true)
+      }
+      else MIND.notify("Fragment path reassignment failed.")
+    }
+    else {
+      MIND.notify("Unable to match fragment or path.")
+    }
+
+  }
+
+  function rememberFragment(event) {
+    var fragment_el = $(event.currentTarget).parents(".mind-fragment")
+    var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
+    
+    if (fragment_id && fragment_id > 0) {
+      var remembered = MIND.Memory.remember(fragment_id)
+
+      MIND.notify(
+        remembered ? 
+          "Fragment remembered." : "Unable to memorize fragment."
+      )
+      MIND.saveMemorySnapshot()
+      refresh(true)
+    }
+    else {
+      MIND.notify("Unable to extract fragment ID.")
+    }    
   }
 
   function applyUI() {
@@ -329,13 +401,18 @@ MIND.front = (function() {
 
   function filterFragments() {
     var query = $("#memory-search").val()
+    var include_forgotten = $("#memory-display-forgotten").hasClass("active")
     var filtered = []
     var fragments = MIND.Memory.fragments || []
 
     fragments.forEach(function(fragment) {
       var path_comparison = MIND.comparePaths(fragment.path, getCurrentPath())
 
-      if (!path_comparison.diff_left.length) {
+      if (
+        !path_comparison.diff_left.length && (
+          include_forgotten || fragment.memorized
+        )
+      ) {
         filtered.push(fragment)
       }
     })
@@ -346,10 +423,11 @@ MIND.front = (function() {
         return parseInt(hit.ref)
       })
 
-      MIND.log("filterFragments | matching_ids:", matching_ids)
       var matching = filtered.filter(function(fragment) {
-        return (matching_ids.indexOf(fragment.id) > -1)
+        return (
+          matching_ids.indexOf(fragment.id) > -1)
       })
+      MIND.log("filterFragments | matching:", matching)
       filtered = matching
     }
     return filtered
@@ -367,6 +445,10 @@ MIND.front = (function() {
     return name
   }
 
+  function pathKey(path) {
+    return path.join("|")
+  }
+
   function displayPathSelections() {
     // First render the selector
     $("#memory-path-selection-container").html(
@@ -376,10 +458,37 @@ MIND.front = (function() {
     // Now render options for the selector
     MIND.Memory.paths.forEach(function(path) {
       selector.append(MIND.render("memory_path_select_option_tmpl", {
-        key: path.join("|"),
+        key: pathKey(path),
         name: pathName(path)
       }))
     })
+  }
+
+  function fragmentPathOptions(fragment) {
+    var current_paths = MIND.Memory.paths
+    var content = ""
+
+    current_paths.forEach(function(path, path_index) {
+      var path_comparison = MIND.comparePaths(path, fragment.path)
+      var same_path = (
+        path_comparison.diff_right === 0 && path_comparison.diff_left === 0
+      )
+      var attribs = {
+        path_name: pathName(path),
+        path_key: pathKey(path),
+        path_index: path_index,
+        assigned: same_path
+      }
+      var option = MIND.render("memory_fragment_path_selection_tmpl", attribs)
+
+      if (same_path) {
+        content = option + content
+      }
+      else {
+        content += option
+      }
+    })
+    return content
   }
 
   function displayFragments() {
@@ -396,6 +505,8 @@ MIND.front = (function() {
     MIND.Memory.on_display = filtered_fragments
     filtered_fragments.forEach(function(fragment) {
       fragment.memorized = (fragment.memorized === true ? true : false)
+      fragment.path_name = pathName(fragment.path)
+      fragment.path_options = fragmentPathOptions(fragment)
       fragments_content = (
         MIND.render("memory_fragment_tmpl", fragment) + fragments_content
       )
@@ -426,7 +537,7 @@ MIND.front = (function() {
     var action = (
           MIND.Memory.on_path && MIND.Memory.on_path.length
         ) ? "show" : "hide"
-    $("#memory-search")[action]()
+    $("#memory-search-operators")[action]()
   }
 
   function extractConfirm(message) {

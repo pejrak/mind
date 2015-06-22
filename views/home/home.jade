@@ -12,8 +12,13 @@ block content
       #memory-path-selection-container.righter
       span.input-group-btn
         button.btn.btn-default#memory-path-new New
-    .clearer
-  input#memory-search.form-control(type="text", placeholder="Search...", style="display:none;")
+  .clearer
+  .input-group#memory-search-operators(style="display:none;")
+    input#memory-search.form-control(type="text", placeholder="Search...")
+    span.input-group-btn
+      button.btn.btn-default#memory-display-forgotten Include forgotten
+        //- span.glyphicon.glyphicon-option-horizontal(aria-hidden="true")
+
   .clearer
   #memory-fragments-container
 
