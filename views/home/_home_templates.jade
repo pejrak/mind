@@ -13,10 +13,10 @@ script#memory_fragment_tmpl(type="text/html")
     .clearer
     .mind-fragment-operators.btn-group.btn-group-sm(role="group")
       button.mind-fragment-forget.btn.btn-default(style="display:{$memorized?'block':'none'};", aria-label="Left Align")
-        span.glyphicon.glyphicon-remove(aria-hidden="true")
+        span.glyphicon.glyphicon-star-empty(aria-hidden="true")
         |  Forget
       button.mind-fragment-remember.btn.btn-default(style="display:{$memorized?'none':'block'};", aria-label="Left Align")
-        span.glyphicon.glyphicon-asterisk(aria-hidden="true")
+        span.glyphicon.glyphicon-star(aria-hidden="true")
         |  Remember
       button.mind-fragment-repath.btn.btn-default.dropdown-toggle(aria-label="Left Align", data-toggle="dropdown")
         span.glyphicon.glyphicon-option-horizontal(aria-hidden="true")
@@ -25,6 +25,9 @@ script#memory_fragment_tmpl(type="text/html")
         span.sr-only Toggle Dropdown
       ul.dropdown-menu
         | {$path_options}
+      button.mind-fragment-remove.btn.btn-default(aria-label="Left Align")
+        span.glyphicon.glyphicon-remove(aria-hidden="true")
+        |  Remove
 
 script#memory_fragment_path_selection_tmpl(type="text/html")
   li

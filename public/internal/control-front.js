@@ -44,6 +44,7 @@ MIND.front = (function() {
     $("body").on("click"  , ".mind-path-component"    , removePathComponent   )
     $("body").on("click"  , "#mind-path-create"       , createPath            )
     $("body").on("click"  , ".mind-fragment-forget"   , forgetFragment        )
+    $("body").on("click"  , ".mind-fragment-remove"   , removeFragment        )
     $("body").on("click"  , ".mind-fragment-remember" , rememberFragment      )
     $("body").on("click"  , ".fragment-path-option"   , repathFragment        )
     $("body").on("change" , "#memory-path-select"     , displayFragments      )
@@ -121,6 +122,26 @@ MIND.front = (function() {
       refresh(true)
     }
     else {
+      MIND.notify("Unable to extract fragment ID.")
+    }
+  }
+
+  function removeFragment(event) {
+    var confirmation = confirm("Are you sure about this removal?")
+    var fragment_el = $(event.currentTarget).parents(".mind-fragment")
+    var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
+    var fragment_val = (fragment_id && fragment_id > 0)
+    
+    if (confirmation && fragment_val) {
+      var removed = MIND.Memory.remove(fragment_id)
+
+      MIND.notify(
+        removed ? "Fragment forgotten." : "Unable to forget matching fragment"
+      )
+      MIND.saveMemorySnapshot()
+      refresh(true)
+    }
+    else if (!fragment_val) {
       MIND.notify("Unable to extract fragment ID.")
     }
   }

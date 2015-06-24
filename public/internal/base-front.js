@@ -49,6 +49,7 @@ var MIND = (function() {
       enc_pwd_len: [2, 100]
     }
     var fragments = []
+    var removed = []
     var BASIC_PATHS = [["temporary"]]
     var initiated_at = Date.now()
     var validate = {
@@ -140,6 +141,7 @@ var MIND = (function() {
             initiated_at: initiated_at,
             extracted_at: Date.now(),
             paths: Memory.paths,
+            removed: removed,
             preferences: MIND.front.getPreferences(),
             owner: current_user,
             source: (source || "local")
@@ -218,6 +220,23 @@ var MIND = (function() {
       return success
     }
 
+    function remove(fragment_id) {
+      var success
+
+      for (var i = 0; i < fragments.length; i++) {
+        var fragment = fragments[i]
+
+        if (fragment && fragment.id === fragment_id) {
+          fragments.splice(i, 1)
+          removed.push(fragment.id)
+          success = true
+          break
+        }
+      }
+
+      return success
+    }
+
     function remember(fragment_id) {
       var fragment = get(fragment_id)
       var success
@@ -234,11 +253,13 @@ var MIND = (function() {
       add: add,
       merge: merge,
       get: get,
+      remove: remove,
       recall: recall,
       forget: forget,
       repath: repath,
       remember: remember,
       fragments: fragments,
+      removed: removed,
       on_display: [],
       on_path: [],
       initiated_at: initiated_at,
@@ -250,18 +271,16 @@ var MIND = (function() {
     }
   } ())
 
+  // Add path to memory, first check if it is unique
   function addPath(path) {
     var current_path_dupes = Memory.paths.filter(function(path_rec) {
-      var comparison = comparePaths(path_rec, path)
-      
-      return comparison.identical
+      return comparePaths(path_rec, path).identical
     })
 
-    MIND.log("addPath | path:", path)
     return (current_path_dupes.length ? false : Memory.paths.push(path))
   }
 
-
+  // Save snapshot to local storage in order to resurrect it when browser reloads  
   function saveMemorySnapshot() {
     var mem_len = Memory.fragments.length
 
@@ -271,10 +290,12 @@ var MIND = (function() {
     }
   }
 
+  // Wipe out the memory
   function clean() {
     var now = Date.now()
 
     Memory.fragments = []
+    Memory.removed = []
     Memory.on_path = []
     Memory.on_display = []
     Memory.initiated_at = now
@@ -344,17 +365,7 @@ var MIND = (function() {
     }
   }
 
-  function intersection(arrays) {
-    var result = arrays.shift().reduce(function(res, v) {
-      if (res.indexOf(v) === -1 && arrays.every(function(a) {
-        return a.indexOf(v) !== -1
-      })) res.push(v)
-      return res
-    }, [])
-
-    return result
-  }
-
+  // Validate snapshot in order to merge it
   function validSnapshot(snapshot) {
     return (
       snapshot && typeof(snapshot) === "object" && 
@@ -362,9 +373,10 @@ var MIND = (function() {
     )
   }
 
+  // Compare paths if they are identical or inclusive of each other
+  // Serves to display fragments on path
   function comparePaths(child_path, parent_path) {
-
-    var intersect = intersection([child_path, parent_path])
+    var intersect = _.intersection(child_path, parent_path)
     var inclusive = (intersect.length === parent_path.length)
     var identical = inclusive && (child_path.length === intersect.length)
 
@@ -377,13 +389,21 @@ var MIND = (function() {
     }
   }  
 
+  // To merge fragments from loaded memory snapshot
   function mergeMemory(snapshot, source) {
     var source = (source || snapshot.source || "local")
 
+    // Merge removed fragment ids history with current snapshot
+    Memory.removed = _.union(Memory.removed, snapshot.removed || [])
     snapshot.fragments.forEach(function(fragment) {
-      Memory.merge(fragment, source)
+      // If this fragment has not been removed, merge it into memory
+      if (Memory.removed.indexOf(fragment.id) === -1) {
+        Memory.merge(fragment, source)
+      }
+      else {
+        MIND.log("mergeMemory | removed fragment:", fragment)
+      }
     })
-
     if (snapshot.paths) snapshot.paths.forEach(addPath)
     Memory.initiated_at = snapshot.initiated_at
     Memory.initiated_at_f = fDate(Memory.initiated_at)
@@ -426,7 +446,6 @@ var MIND = (function() {
     var fn = !/\W/.test(str) ?
       tmpl_cache[str] = tmpl_cache[str] ||
         render(document.getElementById(str).innerHTML) :
-     
       // Generate a reusable function that will serve as a template
       // generator (and which will be cached).
       new Function("obj",
@@ -457,14 +476,14 @@ var MIND = (function() {
   // Base 64 enc, got from 
   // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/btoa#Unicode_Strings
   function toBase(str) {
-      return window.btoa(unescape(encodeURIComponent(str)));
+    return window.btoa(unescape(encodeURIComponent(str)));
   }
 
   function fromBase(str) {
-      return decodeURIComponent(escape(window.atob(str)));
+    return decodeURIComponent(escape(window.atob(str)));
   }
 
-
+  // Export reusable for MIND.front and other accessors
   return {
     render: render,
     clean: clean,
@@ -486,4 +505,3 @@ var MIND = (function() {
     checkCurrentUser: checkCurrentUser
   }
 } ())
-
