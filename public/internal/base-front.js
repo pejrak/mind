@@ -1,5 +1,5 @@
 var MIND = (function() {
-  var current_user
+  var current_user = "none"
   var mem_pointer = "mind_snapshot"
   var cache = {}
 
