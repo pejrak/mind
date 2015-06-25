@@ -501,7 +501,8 @@ MIND.front = (function() {
       }
       else if (
         path_length_match_possible && 
-        MIND.comparePaths(fragment.path, current_path).inclusive
+        MIND.comparePaths(fragment.path, current_path).inclusive && 
+        fragment_in_mem_scope
       ) {
         filtered.push(fragment)
       }
@@ -579,6 +580,17 @@ MIND.front = (function() {
     return content
   }
 
+  function formatFragment(fragment) {
+    var clone = _.clone(fragment)
+
+    clone.created_at_f = MIND.fDate(clone.created_at)
+    clone.updated_at_f = MIND.fDate(clone.updated_at)
+    clone.memorized = (clone.memorized === true ? true : false)
+    clone.path_name = pathName(clone.path)
+    clone.path_options = fragmentPathOptions(clone)
+    return clone
+  }
+
   function displayFragments() {
     var filtered_fragments = filterFragments()
     var current_time = Date.now()
@@ -592,11 +604,11 @@ MIND.front = (function() {
 
     MIND.Memory.on_display = filtered_fragments
     filtered_fragments.forEach(function(fragment) {
-      fragment.memorized = (fragment.memorized === true ? true : false)
-      fragment.path_name = pathName(fragment.path)
-      fragment.path_options = fragmentPathOptions(fragment)
+      var fragment_formatted = formatFragment(fragment)
+      
       fragments_content = (
-        MIND.render("memory_fragment_tmpl", fragment) + fragments_content
+        MIND.render("memory_fragment_tmpl", fragment_formatted) + 
+        fragments_content
       )
     })
     $("#memory-fragments-container").html(fragment_list)
@@ -718,7 +730,7 @@ MIND.front = (function() {
     var extract_str = JSON.stringify(memory_recall)
     var content_extract
 
-    MIND.log("extractSubmit | enc_pwd:", enc_pwd)
+    MIND.log("extractSubmit | enc_pwd, extract_str, memory_recall:", enc_pwd, extract_str, memory_recall)
 
     if (enc_pwd && enc_pwd.length) {
       if (passwordValid(enc_pwd, MIND.Memory.LIMITS.enc_pwd_len)) {

@@ -48,9 +48,41 @@ var MIND = (function() {
       fragment_len: [2, 5000],
       enc_pwd_len: [2, 100]
     }
+    var DEFS = {
+      fragment: {
+        id: {
+          type: "integer",
+          exports: true
+        }, 
+        text: {
+          type: "string",
+          exports: true
+        },
+        owner: {
+          type: "string",
+          exports: true
+        },
+        memorized: {
+          type: "boolean",
+          exports: true
+        },
+        created_at: {
+          type: "integer",
+          exports: true
+        }, 
+        updated_at: {
+          type: "integer",
+          exports: true
+        }, 
+        path: {
+          type: "array",
+          exports: true
+        }
+      }
+    }
+    var BASIC_PATHS = [["temporary"]]
     var fragments = []
     var removed = []
-    var BASIC_PATHS = [["temporary"]]
     var initiated_at = Date.now()
     var validate = {
       fragment: function(text) {
@@ -99,9 +131,7 @@ var MIND = (function() {
         id: id,
         text: text,
         created_at: created_at,
-        created_at_f: fDate(created_at),
         updated_at: updated_at,
-        updated_at_f: fDate(updated_at),
         path: path,
         memorized: true,
         owner: owner
@@ -115,7 +145,20 @@ var MIND = (function() {
       return (duplicates.length === 0)
     }
 
+    function cleanFragment(original) {
+      var fragment = {}
+
+      _.each(DEFS.fragment, function(attr_def, attr_name) {
+        if (original.hasOwnProperty(attr_name)) {
+          fragment[attr_name] = original[attr_name]
+        }
+      })
+
+      return fragment
+    }
+
     function merge(fragment, source) {
+      fragment = cleanFragment(fragment)
       if (fragmentIsUnique(fragment)) {
         if (source && (
             !fragment.load_source || fragment.load_source !== source
@@ -266,6 +309,7 @@ var MIND = (function() {
       initiated_at_f: fDate(initiated_at),
       owner: current_user,
       LIMITS: LIMITS,
+      DEFS: DEFS,
       BASIC_PATHS: BASIC_PATHS,
       paths: BASIC_PATHS.slice(0)
     }
@@ -495,6 +539,7 @@ var MIND = (function() {
     fromBase: fromBase,
     Memory: Memory,
     addPath: addPath,
+    fDate: fDate,
     current_user: current_user,
     checkStructure: checkStructure,
     comparePaths: comparePaths,
