@@ -49,12 +49,32 @@ MIND.front = (function() {
     $("body").on("click"  , ".fragment-path-option"   , repathFragment        )
     $("body").on("change" , "#memory-path-select"     , displayFragments      )
     $("body").on("click"  , ".note-submit-button"     , addNote               )
+    $("body").on("click"  , ".note-switch"            , toggleNoteCreator     )
+    
 
     MIND.index = initSearch()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     applyUI()
     refresh()
+  }
+
+  function toggleNoteCreator(event) {
+    var parent_container = 
+        $(event.currentTarget).parents(".mind-fragment")
+    var notes_container =
+        $(".mind-fragment-notes", parent_container)
+    var notes_creator =
+        $(".mind-fragment-note-creator", parent_container)
+
+    if (notes_creator.is(":visible")) {
+      notes_container.hide()
+      notes_creator.hide()
+    }
+    else {
+      notes_container.show()
+      notes_creator.show()
+    }
   }
 
   function addNote(event) {

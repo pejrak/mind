@@ -7,9 +7,6 @@ script#memory_fragments_list_tmpl(type="text/html")
 
 script#memory_fragment_tmpl(type="text/html")
   .mind-fragment.list-group-item(id="fragment_{$id}", data-fragment-id="{$id}") 
-    .mind-fragment-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
-    .mind-fragment-text.full-text {$text}
-    .clearer
     .mind-fragment-operators.btn-group.btn-group-sm(role="group")
       button.mind-fragment-forget.btn.btn-default(style="display:{$memorized?'block':'none'};", aria-label="Left Align")
         span.glyphicon.glyphicon-star-empty(aria-hidden="true")
@@ -20,6 +17,9 @@ script#memory_fragment_tmpl(type="text/html")
       button.mind-fragment-remove.btn.btn-default(aria-label="Left Align")
         span.glyphicon.glyphicon-remove(aria-hidden="true")
         |  Remove
+      button.note-switch.btn.btn-default(aria-label="Left Align")
+        span.glyphicon.glyphicon-plus(aria-hidden="true")
+        |  Notes
       button.mind-fragment-repath.btn.btn-default.dropdown-toggle(aria-label="Left Align", data-toggle="dropdown")
         span.glyphicon.glyphicon-option-horizontal(aria-hidden="true")
         |  {$path_name} &nbsp;
@@ -27,26 +27,36 @@ script#memory_fragment_tmpl(type="text/html")
         span.sr-only Toggle Dropdown
       ul.dropdown-menu
         | {$path_options}
+
+    .mind-fragment-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
+    .clearer
+    .mind-fragment-text.full-text {$text}
     .clearer
     .mind-fragment-notes(style="display:{$note_count?'block':'none'}")
-      h4 Notes ({$note_count})
-      .list-group
-        | {$note_options}
-    
-    .mind-fragment-note-creator(data-parent-id="{$id}")
-      textarea.form-control.expandable.note-text-input(rows="1", placeholder="Note text...", style="font-size: 90%;")
-      .clearer
-      button.btn.btn-primary.btn-sm.note-submit-button(aria-label="Left Align") Add note
+      | {$note_options}
+      .mind-fragment-note-creator(data-parent-id="{$id}", style="display: none;")
+        .clearer
+        textarea.form-control.expandable.note-text-input(rows="1", placeholder="Note text...", style="font-size: 90%;")
+        .clearer
+        button.btn.btn-primary.btn-sm.note-submit-button(aria-label="Left Align") Add
+        button.btn.btn-link.btn-sm.note-cancel-button(aria-label="Left Align") Cancel      
 
-
+script#memory_fragment_note_creator_tmpl(type="text/html")
+  .mind-fragment-note-creator(data-parent-id="{$id}")
+    textarea.form-control.expandable.note-text-input(rows="1", placeholder="Note text...", style="font-size: 90%;")
+    .clearer
+    button.btn.btn-primary.btn-sm.note-submit-button(aria-label="Left Align") Add
+    button.btn.btn-link.btn-sm.note-cancel-button(aria-label="Left Align") Cancel
 
 script#memory_fragment_path_selection_tmpl(type="text/html")
   li
     a.fragment-path-option(href="#", data-path="{$path_key}", data-path-index="{$path_index}") {$path_name}
     
 script#memory_fragment_note_tmpl(type="text/html")
-  .list-group-item.mind-fragment-note-text(data-note-id="{$id}") {$text}
-    .mind-note-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
+  .mind-fragment-note-text(data-note-id="{$id}") 
+    mark {$updated_at_f}
+    span  {$text}
+    .clearer
 
 script#memory_fragments_extract_tmpl(type="text/html")
   li#memory-extract
