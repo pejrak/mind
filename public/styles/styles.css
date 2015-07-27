@@ -46,6 +46,12 @@ body {
   display: block;
 }
 
+.mind-fragment-note-creator {
+  /*width: 62%;*/
+  padding: 1em;
+  background-color: #eee;
+}
+
 #memory-path-selection-container {
   width: 50%;
 }

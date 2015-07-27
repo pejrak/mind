@@ -44,11 +44,12 @@ var MIND = (function() {
 
 
   var Memory = (function() {
-    var LIMITS = {
+    var LIMITS        = {
       fragment_len: [2, 5000],
-      enc_pwd_len: [2, 100]
+      enc_pwd_len: [2, 100],
+      note_len: [2, 1000]
     }
-    var DEFS = {
+    var DEFS          = {
       fragment: {
         id: {
           type: "integer",
@@ -77,14 +78,18 @@ var MIND = (function() {
         path: {
           type: "array",
           exports: true
+        },
+        notes: {
+          type: "array",
+          exports: true
         }
       }
     }
-    var BASIC_PATHS = [["temporary"]]
-    var fragments = []
-    var removed = []
-    var initiated_at = Date.now()
-    var validate = {
+    var BASIC_PATHS   = [["temporary"]]
+    var fragments     = []
+    var removed       = []
+    var initiated_at  = Date.now()
+    var validate      = {
       fragment: function(text) {
         var passing = (
               typeof(text) === "string" && 
@@ -115,17 +120,30 @@ var MIND = (function() {
           pass: true,
           message: "Text must be unique in path."
         }
+      },
+      note: function(note) {
+        var note_len = (note.text || "").length
+        MIND.log("validate | note:", note)
+        return {
+          pass: (
+            note.parent_id > 0 && 
+            note_len > LIMITS.note_len[0] &&
+            note_len < LIMITS.note_len[1]
+          ),
+          message: "Invalid note submitted."
+        }
       }
     }
 
     function Fragment(options) {
-      var text = options.text
-      var path = options.path
-      var now = Date.now()
-      var created_at = options.created_at || now
-      var updated_at = options.updated_at || now
-      var id = options.id || now
-      var owner = options.owner || MIND.Memory.owner
+      var text        = options.text
+      var path        = options.path
+      var now         = Date.now()
+      var created_at  = options.created_at || now
+      var updated_at  = options.updated_at || now
+      var id          = options.id || now
+      var owner       = options.owner || MIND.Memory.owner
+      var notes       = options.notes || []
 
       return {
         id: id,
@@ -133,6 +151,7 @@ var MIND = (function() {
         created_at: created_at,
         updated_at: updated_at,
         path: path,
+        notes: notes,
         memorized: true,
         owner: owner
       }
@@ -201,12 +220,12 @@ var MIND = (function() {
     }
 
     function add(text, path) {
-      var validation_errors = []
-      var text_valid = validate.fragment(text)
-      var path_valid = validate.path(path)
-      var mem_valid = validate.memory(text, path)
-      var validations = [text_valid, path_valid, mem_valid]
-      var is_valid = true
+      var validation_errors   = []
+      var text_valid          = validate.fragment(text)
+      var path_valid          = validate.path(path)
+      var mem_valid           = validate.memory(text, path)
+      var validations         = [text_valid, path_valid, mem_valid]
+      var is_valid            = true
 
       validations.forEach(function(validation) {
         if (!validation.pass) {
@@ -226,6 +245,37 @@ var MIND = (function() {
           validation_errors: validation_errors
         }
       }
+    }
+
+    function addNote(options) {
+      var validation = validate.note(options)
+      var result     = {
+        success: false,
+        message: "Adding note failed."
+      }
+      
+      if (validation.pass) {
+        var fragment = get(options.parent_id)
+
+        if (fragment && fragment.id) {
+          fragment.notes = fragment.notes || []
+          fragment.notes.push({
+            id: Date.now(),
+            text: options.text,
+            created_at: Date.now(),
+            updated_at: Date.now()
+          })
+          result.success = true
+          result.message = "Note added."
+        }
+        else {
+          result.message = "Unable to associate note to fragment."
+        }
+      }
+      else {
+        result.message = "Incorrect note format."
+      }
+      return result
     }
 
     function get(fragment_id) {
@@ -294,6 +344,7 @@ var MIND = (function() {
 
     return {
       add: add,
+      addNote: addNote,
       merge: merge,
       get: get,
       remove: remove,
@@ -439,9 +490,10 @@ var MIND = (function() {
 
     // Merge removed fragment ids history with current snapshot
     Memory.removed = _.union(Memory.removed, snapshot.removed || [])
-    snapshot.fragments.forEach(function(fragment) {
+    snapshot.fragments.forEach(function(fragment, fidx) {
       // If this fragment has not been removed, merge it into memory
       if (Memory.removed.indexOf(fragment.id) === -1) {
+        MIND.log("mergeMemory | fragment:", fragment)
         Memory.merge(fragment, source)
       }
       else {

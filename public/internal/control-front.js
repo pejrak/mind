@@ -48,12 +48,36 @@ MIND.front = (function() {
     $("body").on("click"  , ".mind-fragment-remember" , rememberFragment      )
     $("body").on("click"  , ".fragment-path-option"   , repathFragment        )
     $("body").on("change" , "#memory-path-select"     , displayFragments      )
+    $("body").on("click"  , ".note-submit-button"     , addNote               )
 
     MIND.index = initSearch()
     MIND.checkCurrentUser()
     MIND.loadMemorySnapshot()
     applyUI()
     refresh()
+  }
+
+  function addNote(event) {
+    var container = $(event.currentTarget).parents(".mind-fragment-note-creator")
+    var text_area = $(".note-text-input", container)
+    var note      = {
+      text: text_area.val(),
+      parent_id: parseInt(container.attr("data-parent-id"))
+    }
+    var added     = MIND.Memory.addNote(note)
+
+    MIND.log("addNote | note:", note)
+
+    if (added.success) {
+      MIND.saveMemorySnapshot()
+      refresh(true)
+    }
+    else {
+      MIND.notify(added.message || "Failed to add note.")
+    }
+
+    
+    
   }
 
   function getPreferences() {
@@ -191,6 +215,7 @@ MIND.front = (function() {
 
   function applyUI() {
     autosize($(".expandable"))
+    $(".mind-fragment-text, .mind-fragment-note-text").linkify()
   }
 
   function createPath() {
@@ -577,17 +602,35 @@ MIND.front = (function() {
         content += option
       }
     })
+    
+    return content
+  }
+
+  function fragmentNoteOptions(fragment) {
+    var current_notes = fragment.notes || []
+    var content = ""
+
+    current_notes.forEach(function(note, note_index) {
+      var note_clone = _.clone(note)
+
+      note_clone.updated_at_f = MIND.fDate(note.updated_at)
+      content += MIND.render("memory_fragment_note_tmpl", note_clone)
+    })
+    
     return content
   }
 
   function formatFragment(fragment) {
     var clone = _.clone(fragment)
 
-    clone.created_at_f = MIND.fDate(clone.created_at)
-    clone.updated_at_f = MIND.fDate(clone.updated_at)
-    clone.memorized = (clone.memorized === true ? true : false)
-    clone.path_name = pathName(clone.path)
-    clone.path_options = fragmentPathOptions(clone)
+    clone.created_at_f  = MIND.fDate(clone.created_at)
+    clone.updated_at_f  = MIND.fDate(clone.updated_at)
+    clone.memorized     = (clone.memorized === true ? true : false)
+    clone.path_name     = pathName(clone.path)
+    clone.note_count    = (clone.notes ? clone.notes.length : 0)
+    clone.note_options  = fragmentNoteOptions(clone)
+    clone.path_options  = fragmentPathOptions(clone)
+
     return clone
   }
 
@@ -613,7 +656,6 @@ MIND.front = (function() {
     })
     $("#memory-fragments-container").html(fragment_list)
     $("#memory-fragments-list").html(fragments_content)
-    $(".mind-fragment-text").linkify()
   }
 
   function displayMemoryOperators() {
@@ -862,7 +904,7 @@ MIND.front = (function() {
 
     displayFragments()
     displayMemoryOperators()
-    // displaySearch()
+    applyUI()
   }
 
   return {

@@ -3,7 +3,6 @@ script#notification_tmpl(type="text/html")
 
 script#memory_fragments_list_tmpl(type="text/html")
   .list-group-item#memory-fragments-label {$label}
-     
   #memory-fragments-list
 
 script#memory_fragment_tmpl(type="text/html")
@@ -18,6 +17,9 @@ script#memory_fragment_tmpl(type="text/html")
       button.mind-fragment-remember.btn.btn-default(style="display:{$memorized?'none':'block'};", aria-label="Left Align")
         span.glyphicon.glyphicon-star(aria-hidden="true")
         |  Remember
+      button.mind-fragment-remove.btn.btn-default(aria-label="Left Align")
+        span.glyphicon.glyphicon-remove(aria-hidden="true")
+        |  Remove
       button.mind-fragment-repath.btn.btn-default.dropdown-toggle(aria-label="Left Align", data-toggle="dropdown")
         span.glyphicon.glyphicon-option-horizontal(aria-hidden="true")
         |  {$path_name} &nbsp;
@@ -25,14 +27,26 @@ script#memory_fragment_tmpl(type="text/html")
         span.sr-only Toggle Dropdown
       ul.dropdown-menu
         | {$path_options}
-      button.mind-fragment-remove.btn.btn-default(aria-label="Left Align")
-        span.glyphicon.glyphicon-remove(aria-hidden="true")
-        |  Remove
+    .clearer
+    .mind-fragment-notes(style="display:{$note_count?'block':'none'}")
+      h4 Notes ({$note_count})
+      .list-group
+        | {$note_options}
+    
+    .mind-fragment-note-creator(data-parent-id="{$id}")
+      textarea.form-control.expandable.note-text-input(rows="1", placeholder="Note text...", style="font-size: 90%;")
+      .clearer
+      button.btn.btn-primary.btn-sm.note-submit-button(aria-label="Left Align") Add note
+
+
 
 script#memory_fragment_path_selection_tmpl(type="text/html")
   li
     a.fragment-path-option(href="#", data-path="{$path_key}", data-path-index="{$path_index}") {$path_name}
     
+script#memory_fragment_note_tmpl(type="text/html")
+  .list-group-item.mind-fragment-note-text(data-note-id="{$id}") {$text}
+    .mind-note-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
 
 script#memory_fragments_extract_tmpl(type="text/html")
   li#memory-extract
