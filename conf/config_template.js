@@ -22,5 +22,11 @@ module.exports = {
   google_oauth: {
     key: 'XXXXX',
     secret: 'XXXXX'
+  },
+  jwt_auth: {
+    secret: 'xxxxx',
+  },
+  getCurrentEnvConfig() {
+    return this[process.env.NODE_ENV || 'development'];
   }
 }
