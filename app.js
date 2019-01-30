@@ -11,12 +11,12 @@ var port = (process.env.PORT || 3000)
 
 // Create MIND object to pass around and assign components to it
 var MIND = {
-      name: 'Mind',
-      app: app,
-      express: express,
-      common: common,
-      dir: __dirname
-    }
+  name: 'Mind',
+  app: app,
+  express: express,
+  common: common,
+  dir: __dirname
+}
 
 // Load core for initialization
 MIND.core = require('./lib/core')(MIND)
