@@ -26,6 +26,7 @@
   "homepage": "https://github.com/pejrak/mind",
   "dependencies": {
     "async": "^2.6.1",
+    "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
     "byline": "^4.2.1",
     "connect-redis": "3.4.0",

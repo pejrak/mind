@@ -2,3 +2,4 @@ node_modules/
 conf/config.js
 data/
 dump.rdb
+tmp/
