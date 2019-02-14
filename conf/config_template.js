@@ -22,5 +22,8 @@ module.exports = {
   google_oauth: {
     key: 'XXXXX',
     secret: 'XXXXX'
-  }
+  },
+  jwt_auth: {
+    secret: 'xxxxx',
+  },
 }
