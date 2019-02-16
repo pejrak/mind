@@ -123,5 +123,31 @@ module.exports = function (MIND) {
     }
   })
 
+  // public endpoint for retrieving content of remote_mind storage type
+  // validated by provided email and publicToken
+  MIND.route.get('/public/storage/posts', (req, res) => {
+    const { email, publicToken } = req.query;
+    if (!email || !publicToken) {
+      res.status(401).send({ message: 'Missing params' });
+      return;
+    }
+
+    MIND.storage.load({
+      user_email: email,
+      storage_type: 'remote_mind',
+    }, function(errors, contentString) {
+      const content = JSON.parse(contentString)
+      if (errors) {
+        res.status(400).send({ message: 'Cannot load user' })
+        return
+      }
+      if (content.publicToken !== publicToken) {
+        res.status(401).send({ message: 'Public token mismatch' })
+        return
+      }
+      res.status(200).json(content.posts)
+    })
+  }, { no_auth: true })
+
   return {}
 }
