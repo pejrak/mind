@@ -54,7 +54,7 @@ var MIND = (function() {
         id: {
           type: "integer",
           exports: true
-        }, 
+        },
         text: {
           type: "string",
           exports: true
@@ -70,11 +70,11 @@ var MIND = (function() {
         created_at: {
           type: "integer",
           exports: true
-        }, 
+        },
         updated_at: {
           type: "integer",
           exports: true
-        }, 
+        },
         path: {
           type: "array",
           exports: true
@@ -92,15 +92,15 @@ var MIND = (function() {
     var validate      = {
       fragment: function(text) {
         var passing = (
-              typeof(text) === "string" && 
-              text.length > LIMITS.fragment_len[0] && 
+              typeof(text) === "string" &&
+              text.length > LIMITS.fragment_len[0] &&
               text.length < LIMITS.fragment_len[1]
             )
 
         return {
           pass: passing,
           message: (
-            "Submittal needs to be between " + 
+            "Submittal needs to be between " +
               LIMITS.fragment_len[0] + " and " + LIMITS.fragment_len[1] + " " +
             "characters."
           )
@@ -126,7 +126,7 @@ var MIND = (function() {
         MIND.log("validate | note:", note)
         return {
           pass: (
-            note.parent_id > 0 && 
+            note.parent_id > 0 &&
             note_len > LIMITS.note_len[0] &&
             note_len < LIMITS.note_len[1]
           ),
@@ -253,7 +253,7 @@ var MIND = (function() {
         success: false,
         message: "Adding note failed."
       }
-      
+
       if (validation.pass) {
         var fragment = get(options.parent_id)
 
@@ -279,7 +279,7 @@ var MIND = (function() {
     }
 
     function get(fragment_id) {
-      var match      
+      var match
       var matches = fragments.filter(function(fragment) {
         var matching = (fragment.id === fragment_id)
 
@@ -343,25 +343,25 @@ var MIND = (function() {
     }
 
     return {
-      add: add,
-      addNote: addNote,
-      merge: merge,
-      get: get,
-      remove: remove,
-      recall: recall,
-      forget: forget,
-      repath: repath,
-      remember: remember,
-      fragments: fragments,
-      removed: removed,
+      add,
+      addNote,
+      merge,
+      get,
+      remove,
+      recall,
+      forget,
+      repath,
+      remember,
+      fragments,
+      removed,
       on_display: [],
       on_path: [],
-      initiated_at: initiated_at,
+      initiated_at,
       initiated_at_f: fDate(initiated_at),
       owner: current_user,
-      LIMITS: LIMITS,
-      DEFS: DEFS,
-      BASIC_PATHS: BASIC_PATHS,
+      LIMITS,
+      DEFS,
+      BASIC_PATHS,
       paths: BASIC_PATHS.slice(0)
     }
   } ())
@@ -375,7 +375,7 @@ var MIND = (function() {
     return (current_path_dupes.length ? false : Memory.paths.push(path))
   }
 
-  // Save snapshot to local storage in order to resurrect it when browser reloads  
+  // Save snapshot to local storage in order to resurrect it when browser reloads
   function saveMemorySnapshot() {
     var mem_len = Memory.fragments.length
 
@@ -405,7 +405,7 @@ var MIND = (function() {
     var is_encrypted
 
     if (
-      content && typeof(content) === "string" && 
+      content && typeof(content) === "string" &&
       content.length
     ) {
       try {
@@ -417,7 +417,7 @@ var MIND = (function() {
       finally {
         is_encrypted = (
           parsed_content && typeof(parsed_content) === "object" &&
-          parsed_content.hasOwnProperty("cipher") && 
+          parsed_content.hasOwnProperty("cipher") &&
           parsed_content.hasOwnProperty("ct")
         );
       }
@@ -434,7 +434,7 @@ var MIND = (function() {
 
     MIND.log("loadMemorySnapshot | snapshot_str:", snapshot_str)
     if (
-      snapshot_str && typeof(snapshot_str) === "string" && 
+      snapshot_str && typeof(snapshot_str) === "string" &&
       snapshot_str.length
     ) {
       var snapshot
@@ -463,7 +463,7 @@ var MIND = (function() {
   // Validate snapshot in order to merge it
   function validSnapshot(snapshot) {
     return (
-      snapshot && typeof(snapshot) === "object" && 
+      snapshot && typeof(snapshot) === "object" &&
       snapshot.fragments && snapshot.fragments.length
     )
   }
@@ -482,7 +482,7 @@ var MIND = (function() {
       child_path: child_path,
       parent_path: parent_path
     }
-  }  
+  }
 
   // To merge fragments from loaded memory snapshot
   function mergeMemory(snapshot, source) {
@@ -530,7 +530,7 @@ var MIND = (function() {
     }
     // Now start a new timer
     cache[timer_name] = setTimeout(execFunction, delay)
-  }  
+  }
 
 
   // Simple JavaScript Templating
@@ -546,10 +546,10 @@ var MIND = (function() {
       // generator (and which will be cached).
       new Function("obj",
         "var p=[],print=function(){p.push.apply(p,arguments);};" +
-       
+
         // Introduce the data as local variables using with(){}
         "with(obj){p.push('" +
-       
+
         // Convert the template into pure J[1:23:57 PM] Matthew Perkins: so conneccted vpn to HK and it worksavaScript
         str
           .replace(/[\r\t\n]/g, " ")
@@ -569,7 +569,7 @@ var MIND = (function() {
     return string.charAt(0).toUpperCase() + string.slice(1)
   }
 
-  // Base 64 enc, got from 
+  // Base 64 enc, got from
   // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/btoa#Unicode_Strings
   function toBase(str) {
     return window.btoa(unescape(encodeURIComponent(str)));

@@ -6,21 +6,21 @@ script#memory_fragments_list_tmpl(type="text/html")
   #memory-fragments-list
 
 script#memory_fragment_tmpl(type="text/html")
-  .mind-fragment.list-group-item(id="fragment_{$id}", data-fragment-id="{$id}") 
+  .mind-fragment.list-group-item(id="fragment_{$id}", data-fragment-id="{$id}")
     .mind-fragment-operators.btn-group.btn-group-sm(role="group")
-      button.mind-fragment-forget.btn.btn-default(style="display:{$memorized?'block':'none'};", aria-label="Left Align")
+      button.mind-fragment-forget.btn.btn-secondary(style="display:{$memorized?'block':'none'};", aria-label="Left Align")
         span.glyphicon.glyphicon-star-empty(aria-hidden="true")
         |  Forget
-      button.mind-fragment-remember.btn.btn-default(style="display:{$memorized?'none':'block'};", aria-label="Left Align")
+      button.mind-fragment-remember.btn.btn-secondary(style="display:{$memorized?'none':'block'};", aria-label="Left Align")
         span.glyphicon.glyphicon-star(aria-hidden="true")
         |  Remember
-      button.mind-fragment-remove.btn.btn-default(aria-label="Left Align")
+      button.mind-fragment-remove.btn.btn-secondary(aria-label="Left Align")
         span.glyphicon.glyphicon-remove(aria-hidden="true")
         |  Remove
-      button.note-switch.btn.btn-default(aria-label="Left Align")
+      button.note-switch.btn.btn-secondary(aria-label="Left Align")
         span.glyphicon.glyphicon-plus(aria-hidden="true")
         |  Notes
-      button.mind-fragment-repath.btn.btn-default.dropdown-toggle(aria-label="Left Align", data-toggle="dropdown")
+      button.mind-fragment-repath.btn.btn-secondary.dropdown-toggle(aria-label="Left Align", data-toggle="dropdown")
         span.glyphicon.glyphicon-option-horizontal(aria-hidden="true")
         |  {$path_name} &nbsp;
         span.caret
@@ -39,7 +39,7 @@ script#memory_fragment_tmpl(type="text/html")
         textarea.form-control.expandable.note-text-input(rows="1", placeholder="Note text...", style="font-size: 90%;")
         .clearer
         button.btn.btn-primary.btn-sm.note-submit-button(aria-label="Left Align") Add
-        button.btn.btn-link.btn-sm.note-cancel-button(aria-label="Left Align") Cancel      
+        button.btn.btn-link.btn-sm.note-cancel-button(aria-label="Left Align") Cancel
 
 script#memory_fragment_note_creator_tmpl(type="text/html")
   .mind-fragment-note-creator(data-parent-id="{$id}")
@@ -51,20 +51,20 @@ script#memory_fragment_note_creator_tmpl(type="text/html")
 script#memory_fragment_path_selection_tmpl(type="text/html")
   li
     a.fragment-path-option(href="#", data-path="{$path_key}", data-path-index="{$path_index}") {$path_name}
-    
+
 script#memory_fragment_note_tmpl(type="text/html")
-  .mind-fragment-note-text(data-note-id="{$id}") 
+  .mind-fragment-note-text(data-note-id="{$id}")
     mark {$updated_at_f}
     span  {$text}
     .clearer
 
 script#memory_fragments_extract_tmpl(type="text/html")
-  li#memory-extract
-    a#memory-extract-link(href="#") Extract ({$count})
+  li#memory-extract.nav-item
+    a#memory-extract-link.nav-link(href="#") Extract ({$count})
 
 script#memory_wipe_tmpl(type="text/html")
-  li#memory-wipe
-    a#memory-wipe-link(href="#") Clean
+  li#memory-wipe.nav-item
+    a#memory-wipe-link.nav-link(href="#") Clean
 
 
 script#memory_path_selection_tmpl(type="text/html")
@@ -76,7 +76,7 @@ script#memory_path_select_option_tmpl(type="text/html")
 script#extraction_input_tmpl(type="text/html")
   label Encryption password (Leave empty for no encryption)
     input#extraction-password.form-control(type="password")
-  p.small#extraction-password-requirements.full-text {$password_requirements} 
+  p.small#extraction-password-requirements.full-text {$password_requirements}
   .clearer
   label Select storage option
     select#extraction-target-select.form-control
@@ -88,18 +88,18 @@ script#path_creation_input_tmpl(type="text/html")
   .input-group
     input.form-control#path-component-input(type="text", placeholder="(eg: information)")
     span.input-group-btn
-      button.btn.btn-default#path-component-confirm(disabled) Add
+      button.btn.btn-primary#path-component-confirm(disabled) Add
   .clearer
   ul#mind-path-components.nav.nav-pills
 
 script#new_path_component_tmpl(type="text/html")
   li(role="presentation").active.mind-path-component
-    a(href="#") {$name}
+    button.btn.btn-primary {$name}
 
 script#extraction_input_tmpl(type="text/html")
   label Encryption password (Leave empty for no encryption)
     input#extraction-password.form-control(type="password")
-  p.small#extraction-password-requirements.full-text {$password_requirements} 
+  p.small#extraction-password-requirements.full-text {$password_requirements}
   .clearer
   label Select storage option
     select#extraction-target-select.form-control
@@ -131,13 +131,13 @@ script#modal_dialog_tmpl(type="text/html")
     .modal-dialog
       .modal-content
         .modal-header
+          h5.modal-title {$title}
           button.close(type="button", data-dismiss="modal", aria-label="Close")
             span(aria-hidden="true") &times;
-          h4.modal-title {$title}
         .modal-body
           p {$body}
         .modal-footer
-          button.btn.btn-default(type="button", data-dismiss="modal") Close
+          button.btn.btn-secondary(type="button", data-dismiss="modal") Close
           button.btn.btn-primary(id="{$button_id}") {$button_label}
 
 a#local-download(href="#", style="display: none;") Download

@@ -26,9 +26,6 @@ MIND.front = (function() {
     $(".mind-profile" ).click(showProfile)
     $("#memory-display-forgotten").click(togglePreference)
     $("#memory-search-all").click(togglePreference)
-
-    
-
     // Dynamic listeners
     $("body").on("input"  , "#memory-search"          , searchMemory          )
     $("body").on("click"  , "#memory-extract-link"    , extractConfirm        )
@@ -50,7 +47,6 @@ MIND.front = (function() {
     $("body").on("change" , "#memory-path-select"     , displayFragments      )
     $("body").on("click"  , ".note-submit-button"     , addNote               )
     $("body").on("click"  , ".note-switch"            , toggleNoteCreator     )
-    
 
     MIND.index = initSearch()
     MIND.checkCurrentUser()
@@ -60,7 +56,7 @@ MIND.front = (function() {
   }
 
   function toggleNoteCreator(event) {
-    var parent_container = 
+    var parent_container =
         $(event.currentTarget).parents(".mind-fragment")
     var notes_container =
         $(".mind-fragment-notes", parent_container)
@@ -96,8 +92,8 @@ MIND.front = (function() {
       MIND.notify(added.message || "Failed to add note.")
     }
 
-    
-    
+
+
   }
 
   function getPreferences() {
@@ -140,7 +136,7 @@ MIND.front = (function() {
         }
       })
     })
-  }  
+  }
 
   function togglePreference(event) {
     var button = $(event.currentTarget)
@@ -155,7 +151,7 @@ MIND.front = (function() {
   function forgetFragment(event) {
     var fragment_el = $(event.currentTarget).parents(".mind-fragment")
     var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
-    
+
     if (fragment_id && fragment_id > 0) {
       var forgotten = MIND.Memory.forget(fragment_id)
 
@@ -175,7 +171,7 @@ MIND.front = (function() {
     var fragment_el = $(event.currentTarget).parents(".mind-fragment")
     var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
     var fragment_val = (fragment_id && fragment_id > 0)
-    
+
     if (confirmation && fragment_val) {
       var removed = MIND.Memory.remove(fragment_id)
 
@@ -217,12 +213,12 @@ MIND.front = (function() {
   function rememberFragment(event) {
     var fragment_el = $(event.currentTarget).parents(".mind-fragment")
     var fragment_id = parseInt($(fragment_el).attr("data-fragment-id"))
-    
+
     if (fragment_id && fragment_id > 0) {
       var remembered = MIND.Memory.remember(fragment_id)
 
       MIND.notify(
-        remembered ? 
+        remembered ?
           "Fragment remembered." : "Unable to memorize fragment."
       )
       MIND.saveMemorySnapshot()
@@ -230,7 +226,7 @@ MIND.front = (function() {
     }
     else {
       MIND.notify("Unable to extract fragment ID.")
-    }    
+    }
   }
 
   function applyUI() {
@@ -262,7 +258,7 @@ MIND.front = (function() {
     var path_components = getNewPathComponents()
 
     path_components.push(path_component_str)
-    
+
     $("#mind-path-components").html(renderNewPathComponents(path_components))
     $(confirmation_button).prop("disabled", true)
     $("#mind-path-create").prop("disabled", false)
@@ -310,7 +306,7 @@ MIND.front = (function() {
             MIND.log("checkPathComponent | response:", response)
             MIND.notify(response.message)
             $("#path-component-confirm").prop("disabled", !response.success)
-          })  
+          })
         }, 500)
       }
     }
@@ -340,7 +336,7 @@ MIND.front = (function() {
           button_id: "mind-path-create"
         })
 
-    showModal(modal_id, path_modal_content)  
+    showModal(modal_id, path_modal_content)
   }
 
   function profileConfirm() {
@@ -348,7 +344,7 @@ MIND.front = (function() {
       key: $("#mind-storage-key").val(),
       secret: $("#mind-storage-secret").val()
     }
-   
+
     $.post("/profile/update", storage_options, function(response) {
       hideModal(containers.profile_modal_id)
       MIND.notify(response.message)
@@ -406,8 +402,8 @@ MIND.front = (function() {
           body: MIND.render("profile_input_tmpl", response.profile),
           button_label: "Update now",
           button_id: "mind-profile-update"
-        })    
-        showModal(modal_id, profile_modal_content)      
+        })
+        showModal(modal_id, profile_modal_content)
       }
       else {
         MIND.notify(
@@ -472,11 +468,10 @@ MIND.front = (function() {
   }
 
   function initSearch() {
-    return lunr(function () {
-      var idx = this
-      idx.field("text", { boost: 10 })
-      idx.field("path")
-      idx.ref("id")
+    return lunr(function() {
+      this.field("text", { boost: 10 })
+      this.field("path")
+      this.ref("id")
     })
   }
 
@@ -497,7 +492,7 @@ MIND.front = (function() {
     MIND.log("getCurrentPath | path:", path_selected)
 
     return (
-      path_selected ? 
+      path_selected ?
         path_selected.split("|") : MIND.Memory.paths[0]
     )
   }
@@ -545,8 +540,8 @@ MIND.front = (function() {
         filtered.push(fragment)
       }
       else if (
-        path_length_match_possible && 
-        MIND.comparePaths(fragment.path, current_path).inclusive && 
+        path_length_match_possible &&
+        MIND.comparePaths(fragment.path, current_path).inclusive &&
         fragment_in_mem_scope
       ) {
         filtered.push(fragment)
@@ -622,7 +617,7 @@ MIND.front = (function() {
         content += option
       }
     })
-    
+
     return content
   }
 
@@ -636,7 +631,7 @@ MIND.front = (function() {
       note_clone.updated_at_f = MIND.fDate(note.updated_at)
       content += MIND.render("memory_fragment_note_tmpl", note_clone)
     })
-    
+
     return content
   }
 
@@ -661,16 +656,16 @@ MIND.front = (function() {
     var fragments_content = ""
     var fragment_list = MIND.render("memory_fragments_list_tmpl", {
           label: (count ? (
-            "Displaying " + count + " fragment" + (count === 1 ? "" : "s") + "."
-          ) : "No fragments on path.")
+            "Displaying " + count + " item" + (count === 1 ? "" : "s") + "."
+          ) : "No items on path.")
         })
 
     MIND.Memory.on_display = filtered_fragments
     filtered_fragments.forEach(function(fragment) {
       var fragment_formatted = formatFragment(fragment)
-      
+
       fragments_content = (
-        MIND.render("memory_fragment_tmpl", fragment_formatted) + 
+        MIND.render("memory_fragment_tmpl", fragment_formatted) +
         fragments_content
       )
     })
@@ -710,7 +705,7 @@ MIND.front = (function() {
       "Extract memory fragments (" + fragment_count + ")"
     ))
     var front_auth = (
-          typeof(MIND.current_user) === "string" && 
+          typeof(MIND.current_user) === "string" &&
           MIND.current_user !== "none"
         )
 
@@ -722,7 +717,7 @@ MIND.front = (function() {
       title: modal_title,
       body: MIND.render("extraction_input_tmpl", {
         count: fragment_count,
-        password_requirements: 
+        password_requirements:
           printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
         remote_dropbox: false,
         remote_mind: front_auth
@@ -826,7 +821,7 @@ MIND.front = (function() {
   }
 
   function extract(storage_selection, content_extract) {
-   
+
     var storageExtraction = {
       local: function() {
         localStore(content_extract)
@@ -862,9 +857,9 @@ MIND.front = (function() {
 
   function remoteStore(storage_type, content_extract) {
     var content_encoded = MIND.toBase(content_extract)
-    
+
     $.post("/store/" + storage_type, {
-      extract: content_encoded     
+      extract: content_encoded
     }, function (response) {
       MIND.notify(response.message)
     })
@@ -872,7 +867,7 @@ MIND.front = (function() {
 
   function wipe() {
     var confirmation = confirm("Do you want to erase all unsaved fragments?")
-    
+
     if (confirmation) {
       MIND.clean()
       refresh()
@@ -883,11 +878,11 @@ MIND.front = (function() {
   }
 
   function printEncRequirements(enc_limits) {
-    
+
     return (
-      "- Minimum length: " + enc_limits[0] + " characters.\n" + 
+      "- Minimum length: " + enc_limits[0] + " characters.\n" +
       "- Maximum length: " + enc_limits[1] + " characters.\n"
-    ) 
+    )
   }
 
   function passwordValid(enc_pwd, enc_limits) {
@@ -896,7 +891,7 @@ MIND.front = (function() {
 
   function decrypt(enc_text, prompt_message) {
     prompt_message = (prompt_message || "Provide password for decryption:")
-    
+
     var enc_pwd = prompt(prompt_message)
 
     if (!enc_pwd) {
