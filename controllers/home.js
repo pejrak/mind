@@ -3,7 +3,6 @@
 module.exports = function (MIND) {
 
   var LOG = MIND.LOG('home')
-  var common = MIND.common
 
   MIND.route.get('/', function (req, res) {
     res.render('home/home')
@@ -27,8 +26,8 @@ module.exports = function (MIND) {
         LOG("profile update | errors, storage_options:", errors, storage_options)
         res.send({
           message: (
-            errors ? 
-              "Unable to update profile options." : 
+            errors ?
+              "Unable to update profile options." :
               "Profile update complete."
             )
         })
@@ -43,16 +42,16 @@ module.exports = function (MIND) {
     var query = req.body.query
 
     if (query && query.length) {
-      MIND.paths.checkIfExists(query, finalize)     
+      MIND.paths.checkIfExists(query, finalize)
     }
     else finalize()
-    
+
     function finalize(error, exists) {
 
       res.send({
         message: (
-          (error || !exists) ? 
-            "Unable to find matching path component." : 
+          (error || !exists) ?
+            "Unable to find matching path component." :
             "Found matching path component"
         ),
         success: (!error && exists)
