@@ -1,0 +1,12 @@
+{
+  "events": {
+    "restart": "echo Rebuilding && npm run build"
+  },
+  "verbose": true,
+  "ignore": [
+    "public/internal/*.js", "tmp/*.js"
+  ],
+  "watch": "lib/ui/",
+  "ext": "js json vue pug",
+  "delay": 500
+}
