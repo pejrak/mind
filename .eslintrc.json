@@ -1,0 +1,40 @@
+{
+  "env": {
+    "jquery": true,
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "extends": "standard",
+  "plugins": [
+    "mocha"
+  ],
+  "globals": {
+    "d3": "readonly",
+    "Slick": "readonly",
+    "numeral": "readonly",
+    "io": "readonly",
+    "google": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "rules": {
+    "comma-dangle": "off",
+    "camelcase": "off",
+    "space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ]
+  }
+}
