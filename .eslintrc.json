@@ -12,11 +12,7 @@
     "mocha"
   ],
   "globals": {
-    "d3": "readonly",
-    "Slick": "readonly",
-    "numeral": "readonly",
-    "io": "readonly",
-    "google": "readonly"
+    "lunr": "readonly"
   },
   "parserOptions": {
     "ecmaVersion": 9,
