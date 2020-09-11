@@ -13,7 +13,7 @@ function start() {
   var _ = require('underscore')
   var Redis = require("redis-stream")
   var stream_client = new Redis(6379, 'localhost')
-  // Following file contains words separated by new lines, 
+  // Following file contains words separated by new lines,
   // with spaces replaced by underscore
   var file_path = (process.argv[2] || "../data/indext.txt")
   var read_stream = byline(fs.createReadStream(file_path, { encoding: 'utf8' }))
@@ -34,10 +34,10 @@ function start() {
 
       if (existing_dupe) {
         console.log(
-          "FOUND hashcode collision | existing_dupe, line:", 
+          "FOUND hashcode collision | existing_dupe, line:",
           existing_dupe, line
         )
-      } 
+      }
       else {
         code_map[cod.toString()] = line
       }
@@ -47,7 +47,7 @@ function start() {
   })
 
   read_stream.on('end', function() {
-    write_stream.end()  
+    write_stream.end()
   })
 
   // Define exit point

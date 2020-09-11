@@ -146,14 +146,14 @@ var MIND = (function() {
       var notes       = options.notes || []
 
       return {
-        id: id,
-        text: text,
-        created_at: created_at,
-        updated_at: updated_at,
-        path: path,
-        notes: notes,
+        id,
+        text,
+        created_at,
+        updated_at,
+        path,
+        notes,
         memorized: true,
-        owner: owner
+        owner,
       }
     }
 

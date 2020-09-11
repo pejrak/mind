@@ -34,3 +34,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.b-icon {
+  margin-right: .5em;
+}
+</style>

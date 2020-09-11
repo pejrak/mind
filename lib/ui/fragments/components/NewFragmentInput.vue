@@ -1,9 +1,9 @@
 <template lang="pug">
 div
   b-form-textarea(
-    v-model='textInput'
-    placeholder='... text ...'
-    :state='newFragmentTextState'
+    v-model="textInput"
+    placeholder="... text ..."
+    :state="newFragmentTextState"
   )
 </template>
 <script>
