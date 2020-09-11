@@ -1,12 +1,14 @@
 {
   "events": {
-    "restart": "echo Rebuilding && npm run build"
+    "start": "echo \"Re-starting nodemon\""
   },
   "verbose": true,
   "ignore": [
-    "public/internal/*.js", "tmp/*.js"
+    "public/internal/*.js",
+    "tmp/*.js",
+    "lib/ui/*"
   ],
-  "watch": "lib/ui/",
+  "watch": "lib",
   "ext": "js json vue pug",
   "delay": 500
 }

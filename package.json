@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack-cli --colors --config lib/ui/vue.bundler.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack-dev-server --config lib/ui/vue.bundler.js"
   },
   "repository": {
     "type": "git",
@@ -59,8 +61,14 @@
     "uuid": "3.3.2",
     "vue": "2.6.12",
     "vue-loader": "^15.9.3",
+    "vue-router": "^3.4.3",
     "vue-template-compiler": "^2.6.12",
+    "vuex": "^3.5.1",
     "webpack": "4.44.1",
     "webpack-cli": "3.3.12"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0",
+    "write-file-webpack-plugin": "^4.5.1"
   }
 }
