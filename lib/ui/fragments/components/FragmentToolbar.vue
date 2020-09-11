@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   b-button-toolbar
-    b-button-group(
+    b-button-group.offset-right(
       size='sm'
     )
       b-button
@@ -14,10 +14,10 @@ div
         b-icon-journal
         span Notes
 
-    b-button-group.offset-left(
+    b-button-group(
       size='sm'
     )
-      b-button
+      b-button(disabled)
         b-icon-diagram2
         span {{ pathFormatted }}
 </template>
@@ -34,7 +34,7 @@ export default {
 </script>
 
 <style>
-.offset-left {
-  margin-left: 1em;
+.offset-right {
+  margin-right: .5em;
 }
 </style>

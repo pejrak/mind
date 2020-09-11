@@ -6,7 +6,7 @@ b-container
     b-col(
       v-for="fragment of fragments"
       :key="fragment.id"
-      lg="4"
+      lg="6"
       md="6"
     )
       fragment(:fragment="fragment")

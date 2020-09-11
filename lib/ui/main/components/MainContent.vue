@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  b-jumbotron
+  b-jumbotron.main-jumbotron
     b-row
       b-col(cols="2")
       b-col
@@ -24,3 +24,9 @@ export default {
   },
 }
 </script>
+<style>
+.jumbotron.main-jumbotron {
+  padding-top: 4em;
+  padding-bottom: 2em;
+}
+</style>

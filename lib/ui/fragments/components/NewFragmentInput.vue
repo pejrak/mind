@@ -5,6 +5,12 @@ div
     placeholder="... text ..."
     :state="newFragmentTextState"
   )
+  br
+  b-button(
+    :disabled="!newFragmentTextIsValid"
+    variant="primary"
+    @click="submitFragment"
+  ) Submit
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
@@ -34,7 +40,11 @@ export default {
   methods: {
     ...mapMutations('fragments', [
       'setNewFragmentText'
-    ])
+    ]),
+    submitFragment() {
+      console.info('submitFragment')
+      this.setNewFragmentText('')
+    }
   }
 }
 </script>
