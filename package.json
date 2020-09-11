@@ -29,6 +29,7 @@
   "homepage": "https://github.com/pejrak/mind",
   "dependencies": {
     "async": "2.6.1",
+    "axios": "^0.20.0",
     "bcrypt": "5.0.0",
     "body-parser": "1.18.3",
     "bootstrap-vue": "^2.16.0",

@@ -1,24 +1,20 @@
-module.exports = function (MIND) {
+module.exports = function(MIND) {
   var LOG = MIND.LOG('home')
 
-  MIND.route.get('/', function (req, res) {
-    res.render('home/home')
-  }, { no_auth: true })
-
-  MIND.route.get('/profile', function (req, res) {
+  MIND.route.get('/user', function(req, res) {
     res.send({
-      profile: req.current_user
+      user: req.currentUser
     })
   })
 
-  MIND.route.post('/profile/update', function (req, res) {
+  MIND.route.post('/profile/update', function(req, res) {
     var storage_options = {
       storage_key: req.body.key,
       storage_secret: req.body.secret,
     }
 
     if (MIND.storage.storageOptionsValid(storage_options)) {
-      var email = req.current_user.email
+      var email = req.currentUser.email
       MIND.user.assignToRecord(email, storage_options, function(errors) {
         LOG("profile update | errors, storage_options:", errors, storage_options)
         res.send({
@@ -35,7 +31,7 @@ module.exports = function (MIND) {
     }
   })
 
-  MIND.route.post('/check_path_component', function (req, res) {
+  MIND.route.post('/check_path_component', function(req, res) {
     var query = req.body.query
 
     if (query && query.length) {
@@ -54,20 +50,20 @@ module.exports = function (MIND) {
         success: (!error && exists)
       })
     }
-  }, { no_auth: true })
+  }, { noAuthentication: true })
 
-  MIND.route.post('/store/:storage_type', function (req, res) {
+  MIND.route.post('/store/:storage_type', function(req, res) {
     var extract = req.body.extract
     var storage_type = req.params.storage_type
-    var user_email = (req.current_user || {}).email
+    var user_email = (req.currentUser || {}).email
 
     if (user_email) {
       MIND.storage.save({
         user_email: user_email,
-        user_record: req.current_user,
+        user_record: req.currentUser,
         storage_type: storage_type,
         content: extract
-      }, function (error) {
+      }, function(error) {
         res.send({
           message: (error ? "Unable to write file." : "Memory written.")
         })
@@ -78,8 +74,8 @@ module.exports = function (MIND) {
     }
   })
 
-  MIND.route.get('/storage/status', function (req, res) {
-    var user_email = (req.current_user || {}).email
+  MIND.route.get('/storage/status', function(req, res) {
+    var user_email = (req.currentUser || {}).email
 
     if (user_email) {
       MIND.storage.check(user_email, function(errors, source_options) {
@@ -97,8 +93,8 @@ module.exports = function (MIND) {
     }
   })
 
-  MIND.route.get('/storage/load/:storage_type', function (req, res) {
-    var user_email = (req.current_user || {}).email
+  MIND.route.get('/storage/load/:storage_type', function(req, res) {
+    var user_email = (req.currentUser || {}).email
     var storage_type = req.params.storage_type
 
     if (user_email) {
@@ -143,7 +139,7 @@ module.exports = function (MIND) {
       }
       res.status(200).json(content.posts)
     })
-  }, { no_auth: true })
+  }, { noAuthentication: true })
 
   return {}
 }
