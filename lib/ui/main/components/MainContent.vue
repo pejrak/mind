@@ -1,5 +1,6 @@
 <template lang="pug">
 div
+  fragment-extraction-modal
   b-jumbotron.main-jumbotron
     b-row
       b-col(cols="2")
@@ -12,12 +13,14 @@ div
 </template>
 
 <script>
+import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
 import FragmentList from '../../fragments/components/FragmentList.vue'
 import FragmentPathSelection from '../../fragmentPaths/components/FragmentPathSelection.vue'
 import NewFragmentInput from '../../fragments/components/NewFragmentInput.vue'
 
 export default {
   components: {
+    FragmentExtractionModal,
     FragmentList,
     FragmentPathSelection,
     NewFragmentInput,
