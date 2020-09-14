@@ -14,7 +14,9 @@ div
       .float-right
         b-button(
           @click='showNewFragmentForm = false'
-        ) << Hide
+        )
+          b-icon-eye-slash
+          span Hide
       .spacer
   fragment-list
 </template>
