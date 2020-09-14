@@ -51,7 +51,11 @@ b-container
 </template>
 <script>
 import Fragment from './Fragment.vue'
-import { mapGetters, mapMutations } from 'vuex'
+import {
+  mapGetters,
+  mapMutations,
+  mapState,
+} from 'vuex'
 
 export default {
   components: {
@@ -60,6 +64,8 @@ export default {
   computed: {
     ...mapGetters('fragments', [
       'displayedFragments',
+    ]),
+    ...mapState('fragments', [
       'searchQuery',
     ]),
     ...mapGetters('fragmentPaths', [

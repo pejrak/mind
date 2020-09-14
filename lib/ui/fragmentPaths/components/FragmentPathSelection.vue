@@ -1,12 +1,16 @@
 <template lang="pug">
-b-input-group(prepend="Path selection")
+b-input-group
+  b-input-group-prepend
+    b-input-group-text
+      b-icon-diagram2
+      span Path selection
   b-select(
     :options="availablePathOptions"
     v-model="selected"
   )
   b-btn(
     href="#"
-  ) Add
+  ) Add path
 </template>
 
 <script>
