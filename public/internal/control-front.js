@@ -121,7 +121,6 @@ MIND.front = (function() {
     prefs.forEach(function(preference) {
       PREFERENCES.forEach(function(def_pref, def_idx) {
         if (def_pref.name === preference.name) {
-          var load_val = preference.current
           var target = getPreferenceTarget(preference.name)
 
           if (target.length) {
@@ -132,7 +131,6 @@ MIND.front = (function() {
               target[prefered_val ? "addClass" : "removeClass"]("active")
             }
           }
-
         }
       })
     })

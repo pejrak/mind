@@ -15,9 +15,13 @@ b-card.fragment-card(
     )
       b-icon-pencil
     span At #[strong {{ updatedAtFormatted }}]
-    span  by #[strong {{ fragment.owner }}]
+    span(
+      v-if="fragment.owner === userEmail"
+    )  by #[strong.text-success me]
+    span(v-else)  by #[strong {{ fragment.owner }}]
 </template>
 <script>
+import { mapState } from 'vuex'
 import FragmentToolbar from './FragmentToolbar.vue'
 
 const formatTime = require('../../../format/time')
@@ -39,6 +43,9 @@ export default {
     FragmentToolbar,
   },
   computed: {
+    ...mapState('authentication', [
+      'userEmail'
+    ]),
     updatedAtFormatted() {
       return formatTime(this.fragment.updated_at)
     },
