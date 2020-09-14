@@ -1,14 +1,17 @@
 <template lang="pug">
 div
   fragment-extraction-modal
-  b-jumbotron.main-jumbotron
-    b-row
-      b-col(cols="2")
-      b-col
-        fragment-path-selection
-      b-col(cols="2")
-    br
-    new-fragment-input
+  b-collapse(
+    v-model="showNewFragmentForm"
+  )
+    b-jumbotron.main-jumbotron
+      b-row
+        b-col(cols="2")
+        b-col
+          fragment-path-selection
+        b-col(cols="2")
+      br
+      new-fragment-input
   fragment-list
 </template>
 
@@ -24,6 +27,11 @@ export default {
     FragmentList,
     FragmentPathSelection,
     NewFragmentInput,
+  },
+  data() {
+    return {
+      showNewFragmentForm: false
+    }
   },
 }
 </script>
