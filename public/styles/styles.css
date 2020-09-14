@@ -1,8 +1,4 @@
-body {
-  padding-top: 70px;
-}
-
-.clearer {
+.clearer, .spacer {
   clear: both;
   width: 100%;
   height: 1em;
@@ -14,44 +10,6 @@ body {
   height: 1px;
 }
 
-.lefter {
-  float: left;
-}
-
-.righter {
-  float: right;
-}
-
 .full-text {
   white-space: pre-line;
-}
-/*
-.mind-fragment {
-  padding: 1em;
-  border: 1px solid #ccc;
-  margin-top: 1em;
-}*/
-
-.mind-fragment .mind-fragment-path {
-  font-size: 90%;
-  color: #444;
-  /*display: none;*/
-}
-
-.mind-fragment-updated-time {
-  font-size: 90%;
-}
-
-.mind-fragment:hover .mind-fragment-path {
-  display: block;
-}
-
-.mind-fragment-notes {
-  /*width: 62%;*/
-  padding: 1em;
-  background-color: #eee;
-}
-
-#memory-path-selection-container {
-  width: 50%;
 }

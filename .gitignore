@@ -3,3 +3,4 @@ conf/config.js
 data/
 dump.rdb
 tmp/
+public/internal/*-bundle.*

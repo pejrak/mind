@@ -24,6 +24,6 @@ Inteface that allows a user to securely manage text fragments. The whole local "
 - Fragments can be created as private and personal
 - Personal fragments won't be shared with the trustees
 ## Ownership
-- Memory is owned by user and fragment transfer only occurs on established trusts, and can persisted by the service in encrypted form on explicitly selected storage
+- Memory is owned by user and fragment transfer only occurs on established trusts, and is only persisted by the service in encrypted form on an explicitly selected storage
 - Service authenticates the user to obtain user unique identifier (email)
 - User profile is persisted on the service in order to save preferences and pointers for storage
