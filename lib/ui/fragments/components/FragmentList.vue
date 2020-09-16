@@ -20,7 +20,7 @@ b-container
           b-input-group-text
             b-checkbox(
               v-model='searchIncludeForgottenInput'
-            ) Find forgotten
+            ) Include forgotten
           b-input-group-text
             b-checkbox(
               v-model='searchAllPathsInput'
@@ -67,6 +67,8 @@ export default {
     ]),
     ...mapState('fragments', [
       'searchQuery',
+      'searchIncludeForgotten',
+      'searchAllPaths',
     ]),
     ...mapGetters('fragmentPaths', [
       'selectedFragmentPathTitle'
@@ -74,24 +76,44 @@ export default {
     fragments() {
       return generateMockFragments(10)
     },
+    searchAllPathsInput: {
+      get() {
+        return this.searchAllPaths
+      },
+      set(val) {
+        this.setSearchAllPaths(val)
+      }
+    },
+    searchIncludeForgottenInput: {
+      get() {
+        return this.searchIncludeForgotten
+      },
+      set(val) {
+        this.setSearchIncludeForgotten(val)
+      }
+    },
     searchQueryInput: {
       get() {
         return this.searchQuery
       },
       set(val) {
-        this.setSearchQuery(val)
+        clearTimeout(this.queryDebouncer)
+        this.queryDebouncer = setTimeout(() => {
+          this.setSearchQuery(val)
+        }, 300)
       },
     },
   },
   data() {
     return {
-      searchIncludeForgottenInput: true,
-      searchAllPathsInput: true,
+      queryDebouncer: null
     }
   },
   methods: {
     ...mapMutations('fragments', [
       'setSearchQuery',
+      'setSearchAllPaths',
+      'setSearchIncludeForgotten',
     ])
   },
 }

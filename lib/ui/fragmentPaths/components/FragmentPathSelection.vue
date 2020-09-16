@@ -9,7 +9,7 @@ b-input-group
     v-model="selected"
   )
   b-btn(
-    href="#"
+    v-b-modal="'fragment-path-setup'"
   ) Add path
 </template>
 

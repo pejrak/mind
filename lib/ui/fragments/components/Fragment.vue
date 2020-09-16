@@ -1,6 +1,6 @@
 <template lang="pug">
 b-card.fragment-card(
-  border-variant='dark'
+  :border-variant="fragment.forgotten ? 'warning' : 'dark'"
   bg-variant='secondary'
 )
   fragment-toolbar(
