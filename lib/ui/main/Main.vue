@@ -4,6 +4,7 @@ div
     href="#"
     variant="primary"
     type="dark"
+    fixed="top"
   )
     b-navbar-brand Mind
     main-navigation
@@ -32,7 +33,7 @@ export default {
   },
   methods: {
     ...mapActions('authentication', [
-      'getUser'
+      'getUser',
     ])
   },
 }
@@ -41,5 +42,8 @@ export default {
 <style>
 .b-icon {
   margin-right: .5em;
+}
+body {
+  padding-top: 4em;
 }
 </style>

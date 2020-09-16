@@ -16,7 +16,7 @@ b-card.fragment-card(
       b-icon-pencil
     span At #[strong {{ updatedAtFormatted }}]
     span(
-      v-if="fragment.owner === userEmail"
+      v-if="!fragment.owner || fragment.owner === userEmail"
     )  by #[strong.text-success me]
     span(v-else)  by #[strong {{ fragment.owner }}]
 </template>
@@ -31,8 +31,8 @@ export default {
    * {
         id,
         text,
-        created_at,
-        updated_at,
+        createdAt,
+        updatedAt,
         path,
         notes: Array,
         memorized: Boolean,
@@ -47,10 +47,10 @@ export default {
       'userEmail'
     ]),
     updatedAtFormatted() {
-      return formatTime(this.fragment.updated_at)
+      return formatTime(this.fragment.updatedAt)
     },
     updatedLaterThanCreated() {
-      return (this.fragment.updated_at > this.fragment.created_at)
+      return (this.fragment.updatedAt > this.fragment.createdAt)
     }
   },
   data() {

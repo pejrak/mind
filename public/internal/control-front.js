@@ -508,8 +508,7 @@ MIND.front = (function() {
       add_result.validation_errors.forEach(function(val_message) {
         MIND.notify(val_message)
       })
-    }
-    else {
+    } else {
       MIND.notify("Added memory fragment.")
       MIND.saveMemorySnapshot()
       cleanFragmentInput()

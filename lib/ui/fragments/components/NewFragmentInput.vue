@@ -39,11 +39,14 @@ export default {
   },
   methods: {
     ...mapMutations('fragments', [
-      'setNewFragmentText'
+      'setNewFragmentText',
     ]),
-    submitFragment() {
+    ...mapActions('fragments', [
+      'submitNewFragment',
+    ]),
+    async submitFragment() {
       console.info('submitFragment')
-      this.setNewFragmentText('')
+      this.submitNewFragment()
     }
   }
 }

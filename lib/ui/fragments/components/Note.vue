@@ -10,8 +10,8 @@ export default {
    * {
         id: Date.now(),
         text: options.text,
-        created_at: Date.now(),
-        updated_at: Date.now()
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       }
    */
   props: ['note'],
