@@ -1,6 +1,7 @@
 <template lang="pug">
 b-card.fragment-card(
-  border-variant='secondary'
+  border-variant='dark'
+  bg-variant='secondary'
 )
   fragment-toolbar(
     :fragment="fragment"
@@ -19,9 +20,19 @@ b-card.fragment-card(
       v-if="!fragment.owner || fragment.owner === userEmail"
     )  by #[strong.text-success me]
     span(v-else)  by #[strong {{ fragment.owner }}]
+  .spacer
+  div(
+    v-if='fragment.notes && fragment.notes.length > 0'
+  )
+    b Notes ({{ fragment.notes.length }})
+    .spacer
+    fragment-notes(
+      :fragment="fragment"
+    )
 </template>
 <script>
 import { mapState } from 'vuex'
+import FragmentNotes from './FragmentNotes.vue'
 import FragmentToolbar from './FragmentToolbar.vue'
 
 const formatTime = require('../../../format/time')
@@ -40,6 +51,7 @@ export default {
       }
    */
   components: {
+    FragmentNotes,
     FragmentToolbar,
   },
   computed: {

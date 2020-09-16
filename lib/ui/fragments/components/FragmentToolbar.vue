@@ -2,20 +2,20 @@
 div
   b-button-toolbar
     b-button-group.offset-right(
-      size='sm'
+      size="sm"
     )
-      b-button
+      b-button(@click="triggerForget")
         b-icon-bookmark-dash
         span Forget
-      b-button
+      b-button(@click="triggerRemoval")
         b-icon-trash
         span Remove
-      b-button
+      b-button(@click="toggleNotes")
         b-icon-journal
         span Notes
 
     b-button-group(
-      size='sm'
+      size="sm"
     )
       b-button(disabled)
         b-icon-diagram2
@@ -29,6 +29,11 @@ export default {
     pathFormatted() {
       return this.fragment.path.join(' - ')
     },
+  },
+  methods: {
+    toggleNotes() {},
+    triggerForget() {},
+    triggerRemoval() {},
   },
 }
 </script>

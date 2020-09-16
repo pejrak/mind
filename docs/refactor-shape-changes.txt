@@ -1,0 +1,4 @@
+for fragments, notes:
+created_at > createdAt
+updated_at > updatedAt
+memorized: Boolean > forgotten: !boolean

@@ -22,10 +22,11 @@ export default {
     ]),
     ...mapGetters('fragmentPaths', [
       'availablePathOptions',
+      'selectedFragmentPathName',
     ]),
     selected: {
       get() {
-        return this.selectedFragmentPath
+        return this.selectedFragmentPathName
       },
       set(value) {
         this.selectFragmentPath(value)

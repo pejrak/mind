@@ -1,10 +1,11 @@
 <template lang="pug">
 div
-  p.note-text {{ note.text }}
-  pre {{ note }}
+  small
+    strong {{ timeLabel }}:
+    span.note-text  {{ note.text }}
 </template>
 <script>
-
+const formatTime = require('../../../format/time')
 export default {
   /** Note shape
    * {
@@ -14,12 +15,11 @@ export default {
         updatedAt: Date.now(),
       }
    */
+  computed: {
+    timeLabel() {
+      return `${formatTime(this.note.updatedAt)}`
+    },
+  },
   props: ['note'],
 }
 </script>
-
-<style>
-.note-text {
-  padding: 1em;
-}
-</style>
