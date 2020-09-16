@@ -21,7 +21,9 @@ b-container
             b-checkbox(
               v-model='searchIncludeForgottenInput'
             ) Include forgotten
-          b-input-group-text
+          b-input-group-text(
+            v-if='moreThanOneFragmentPath'
+          )
             b-checkbox(
               v-model='searchAllPathsInput'
             ) All paths
@@ -47,7 +49,7 @@ b-container
     b-alert(
       show
       variant='info'
-    ) Found nothing.
+    ) Nothing here.
 </template>
 <script>
 import Fragment from './Fragment.vue'
@@ -67,11 +69,12 @@ export default {
     ]),
     ...mapState('fragments', [
       'searchQuery',
-      'searchIncludeForgotten',
       'searchAllPaths',
+      'searchIncludeForgotten',
     ]),
     ...mapGetters('fragmentPaths', [
-      'selectedFragmentPathTitle'
+      'moreThanOneFragmentPath',
+      'selectedFragmentPathTitle',
     ]),
     fragments() {
       return generateMockFragments(10)

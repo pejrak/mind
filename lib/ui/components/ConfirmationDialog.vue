@@ -2,12 +2,15 @@
 b-modal(
   ref='confirmationDialogModal'
   :ok-title="confirmTitle || 'Yes'"
-  :title="modalTitle || 'Confirmation required'"
+  :ok-only="confirmOnly"
+  :title="dialogTitle || 'Confirmation required'"
   @ok="triggerConfirmation"
   @cancel="triggerCancelation"
   @close="triggerCancelation"
 )
-  .text-alert {{ confirmationMessage || defaultConfirmationMessage }}
+  .text-alert(
+    v-if='confirmationMessage !== false'
+  ) {{ confirmationMessage || defaultConfirmationMessage }}
   .spacer
   slot
 </template>
@@ -23,6 +26,11 @@ export default {
   methods: {
     show() {
       this.$refs['confirmationDialogModal'].show()
+
+      return this
+    },
+    hide() {
+      this.$refs['confirmationDialogModal'].hide()
 
       return this
     },
@@ -47,8 +55,9 @@ export default {
   },
   props: [
     'confirmationMessage',
+    'confirmOnly',
     'confirmTitle',
-    'modalTitle',
+    'dialogTitle',
   ],
 }
 </script>

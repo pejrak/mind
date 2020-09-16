@@ -83,9 +83,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.offset-right {
-  margin-right: .5em;
-}
-</style>

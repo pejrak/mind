@@ -418,10 +418,10 @@ MIND.front = (function() {
       local: function() {
         return loadLocalFile(done)
       },
-      remote_mind: function() {
+      remoteMind: function() {
         return loadRemoteMemory(source, done)
       },
-      remote_dropbox: function() {
+      remoteDropbox: function() {
         return loadRemoteMemory(source, done)
       }
     }
@@ -716,8 +716,8 @@ MIND.front = (function() {
         count: fragment_count,
         password_requirements:
           printEncRequirements(MIND.Memory.LIMITS.enc_pwd_len),
-        remote_dropbox: false,
-        remote_mind: front_auth
+        remoteDropbox: false,
+        remoteMind: front_auth
       }),
       button_label: "Extract now",
       button_id: "mind-extract-submit"
@@ -740,8 +740,8 @@ MIND.front = (function() {
         modal_id: modal_id,
         title: "Load memory",
         body: MIND.render("load_input_tmpl", {
-          remote_dropbox: storage_status.remote_dropbox,
-          remote_mind: storage_status.remote_mind
+          remoteDropbox: storage_status.remoteDropbox,
+          remoteMind: storage_status.remoteMind
         }),
         button_label: "Load now",
         button_id: "mind-load-submit"
@@ -754,8 +754,8 @@ MIND.front = (function() {
 
   function checkStorageStatus(done) {
     var source_options = {
-      remote_mind: false,
-      remote_dropbox: false
+      remoteMind: false,
+      remoteDropbox: false
     }
 
     MIND.notify("Checking storage status")
@@ -764,8 +764,8 @@ MIND.front = (function() {
         if (response && response.source_options) {
           var loaded_source_options = response.source_options
 
-          source_options.remote_mind = loaded_source_options.remote_mind
-          source_options.remote_dropbox = loaded_source_options.remote_dropbox
+          source_options.remoteMind = loaded_source_options.remoteMind
+          source_options.remoteDropbox = loaded_source_options.remoteDropbox
           return finalize()
         }
         else return finalize()
@@ -823,11 +823,11 @@ MIND.front = (function() {
       local: function() {
         localStore(content_extract)
       },
-      remote_mind: function() {
-        remoteStore("remote_mind", content_extract)
+      remoteMind: function() {
+        remoteStore("remoteMind", content_extract)
       },
-      remote_dropbox: function() {
-        remoteStore("remote_dropbox", content_extract)
+      remoteDropbox: function() {
+        remoteStore("remoteDropbox", content_extract)
       }
     }
 
@@ -852,10 +852,10 @@ MIND.front = (function() {
     document.getElementById("local-download").click()
   }
 
-  function remoteStore(storage_type, content_extract) {
+  function remoteStore(storageType, content_extract) {
     var content_encoded = MIND.toBase(content_extract)
 
-    $.post("/store/" + storage_type, {
+    $.post("/store/" + storageType, {
       extract: content_encoded
     }, function (response) {
       MIND.notify(response.message)

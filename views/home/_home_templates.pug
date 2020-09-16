@@ -81,8 +81,8 @@ script#extraction_input_tmpl(type="text/html")
   label Select storage option
     select#extraction-target-select.form-control
       option(value="local", selected) Download (local)
-      option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
-      option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
+      option(value="remoteMind", style="display:{$remoteMind?'block':'none'};") This site
+      option(value="remoteDropbox", style="display:{$remoteDropbox?'block':'none'};") Remote (Dropbox)
 
 script#path_creation_input_tmpl(type="text/html")
   .input-group
@@ -104,25 +104,25 @@ script#extraction_input_tmpl(type="text/html")
   label Select storage option
     select#extraction-target-select.form-control
       option(value="local", selected) Download (local)
-      option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
-      option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
+      option(value="remoteMind", style="display:{$remoteMind?'block':'none'};") This site
+      option(value="remoteDropbox", style="display:{$remoteDropbox?'block':'none'};") Remote (Dropbox)
 
 
 script#profile_input_tmpl(type="text/html")
   h4 Remote storage options (Dropbox)
   label Storage key
-    input#mind-storage-key.form-control(type="text", value="{$storage_key}")
+    input#mind-storage-key.form-control(type="text", value="{$storageKey}")
   .clearer
   label Storage secret
-    input#mind-storage-secret.form-control(type="text", value="{$storage_secret}")
+    input#mind-storage-secret.form-control(type="text", value="{$storageSecret}")
 
 script#load_input_tmpl(type="text/html")
   p.small Content loaded from selected source will be merged with current content. If you wish, you can clean memory first.
   label Select source
     select#load-source-select.form-control
       option(value="local", selected) Upload (local)
-      option(value="remote_mind", style="display:{$remote_mind?'block':'none'};") This site
-      option(value="remote_dropbox", style="display:{$remote_dropbox?'block':'none'};") Remote (Dropbox)
+      option(value="remoteMind", style="display:{$remoteMind?'block':'none'};") This site
+      option(value="remoteDropbox", style="display:{$remoteDropbox?'block':'none'};") Remote (Dropbox)
   .clearer
   input.form-control#load-source-file(type="file")
 

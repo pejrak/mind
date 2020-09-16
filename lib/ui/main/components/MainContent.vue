@@ -1,7 +1,6 @@
 <template lang="pug">
 div
   fragment-extraction-modal
-  fragment-path-setup-modal
   b-button(
     v-if='!showNewFragmentForm'
     block
@@ -25,14 +24,12 @@ div
 <script>
 import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
 import FragmentList from '../../fragments/components/FragmentList.vue'
-import FragmentPathSetupModal from '../../fragmentPaths/components/FragmentPathSetupModal.vue'
 import NewFragmentInput from '../../fragments/components/NewFragmentInput.vue'
 
 export default {
   components: {
     FragmentExtractionModal,
     FragmentList,
-    FragmentPathSetupModal,
     NewFragmentInput,
   },
   data() {

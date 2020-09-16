@@ -10,6 +10,14 @@
   height: 1px;
 }
 
+.offset-right {
+  margin-right: .5em;
+}
+
+.offset-left {
+  margin-left: .5em;
+}
+
 .full-text {
   white-space: pre-line;
 }
