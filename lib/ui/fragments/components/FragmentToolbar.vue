@@ -13,6 +13,9 @@ div
       b-button(@click="toggleNotes")
         b-icon-journal
         span Notes
+          span(
+            v-if='fragment.notes.length'
+          )  ({{ fragment.notes.length }})
 
     b-button-group(
       size="sm"
@@ -23,6 +26,7 @@ div
 </template>
 
 <script>
+import { mapActions, mapMutations } from 'vuex'
 export default {
   props: ['fragment'],
   computed: {
@@ -31,8 +35,18 @@ export default {
     },
   },
   methods: {
-    toggleNotes() {},
-    triggerForget() {},
+    ...mapActions('fragments', [
+      'forgetFragment'
+    ]),
+    ...mapMutations('fragments', [
+      'showNotes'
+    ]),
+    toggleNotes() {
+      this.showNotes(this.fragment.id)
+    },
+    triggerForget() {
+      this.forgetFragment(this.fragment.id)
+    },
     triggerRemoval() {},
   },
 }
