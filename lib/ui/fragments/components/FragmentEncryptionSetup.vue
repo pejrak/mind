@@ -51,8 +51,12 @@ export default {
     ...mapActions('authentication', [
       'importKey',
     ]),
-    triggerKeyImport() {
-      this.importKey(this.keyImportInput)
+    async triggerKeyImport() {
+      const success = await this.importKey(this.keyImportInput)
+
+      if (success) {
+        this.keyImportInput = ''
+      }
     },
   }
 }
