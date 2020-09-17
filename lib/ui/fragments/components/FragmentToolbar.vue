@@ -60,6 +60,7 @@ export default {
   methods: {
     ...mapActions('fragments', [
       'forgetFragment',
+      'recollectFragment',
     ]),
     ...mapMutations('fragments', [
       'removeFragment',

@@ -30,7 +30,6 @@ div
       :disabled='!pathIsValid || pathAlreadyAdded'
       @click="submitNewPath"
     ) Save path: #[strong {{ pathLabel }}]
-    pre {{ $data }}
   b-alert(
     v-else
     show
