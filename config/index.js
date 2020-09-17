@@ -1,9 +1,9 @@
 
-const config = require('./config');
+const config = require('./config')
 
 module.exports = {
   ...config,
   getCurrentEnvConfig() {
-    return config[process.env.NODE_ENV || 'development'];
+    return config[process.env.NODE_ENV || 'development']
   }
-};
+}

@@ -71,7 +71,7 @@ var MIND = (function() {
           type: "integer",
           exports: true
         },
-        updated_at: {
+        updatedAt: {
           type: "integer",
           exports: true
         },
@@ -140,7 +140,7 @@ var MIND = (function() {
       var path        = options.path
       var now         = Date.now()
       var created_at  = options.created_at || now
-      var updated_at  = options.updated_at || now
+      var updatedAt  = options.updatedAt || now
       var id          = options.id || now
       var owner       = options.owner || MIND.Memory.owner
       var notes       = options.notes || []
@@ -149,7 +149,7 @@ var MIND = (function() {
         id,
         text,
         created_at,
-        updated_at,
+        updatedAt,
         path,
         notes,
         memorized: true,
@@ -263,7 +263,7 @@ var MIND = (function() {
             id: Date.now(),
             text: options.text,
             created_at: Date.now(),
-            updated_at: Date.now()
+            updatedAt: Date.now()
           })
           result.success = true
           result.message = "Note added."

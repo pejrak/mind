@@ -28,7 +28,7 @@ script#memory_fragment_tmpl(type="text/html")
       ul.dropdown-menu
         | {$path_options}
 
-    .mind-fragment-updated-time.righter(data-updated="{$updated_at}") {$updated_at_f}
+    .mind-fragment-updated-time.righter(data-updated="{$updatedAt}") {$updatedAt_f}
     .clearer
     .mind-fragment-text.full-text {$text}
     .clearer
@@ -54,7 +54,7 @@ script#memory_fragment_path_selection_tmpl(type="text/html")
 
 script#memory_fragment_note_tmpl(type="text/html")
   .mind-fragment-note-text(data-note-id="{$id}")
-    mark {$updated_at_f}
+    mark {$updatedAt_f}
     span  {$text}
     .clearer
 

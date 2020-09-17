@@ -625,7 +625,7 @@ MIND.front = (function() {
     current_notes.forEach(function(note, note_index) {
       var note_clone = _.clone(note)
 
-      note_clone.updated_at_f = MIND.fDate(note.updated_at)
+      note_clone.updatedAt_f = MIND.fDate(note.updatedAt)
       content += MIND.render("memory_fragment_note_tmpl", note_clone)
     })
 
@@ -636,7 +636,7 @@ MIND.front = (function() {
     var clone = _.clone(fragment)
 
     clone.created_at_f  = MIND.fDate(clone.created_at)
-    clone.updated_at_f  = MIND.fDate(clone.updated_at)
+    clone.updatedAt_f  = MIND.fDate(clone.updatedAt)
     clone.memorized     = (clone.memorized === true ? true : false)
     clone.path_name     = pathName(clone.path)
     clone.note_count    = (clone.notes ? clone.notes.length : 0)
