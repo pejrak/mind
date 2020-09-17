@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     commonjs: true,
     es6: true,
-    node: true
+    node: true,
   },
   extends: [
     'plugin:vue/essential',
@@ -14,7 +14,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
-    ecmaVersion: 2018
+    ecmaVersion: 2020,
   },
   plugins: [
     'vue'
@@ -26,7 +26,7 @@ module.exports = {
       {
         anonymous: 'never',
         named: 'never',
-        asyncArrow: 'always'
+        asyncArrow: 'always',
       }
     ]
   }
