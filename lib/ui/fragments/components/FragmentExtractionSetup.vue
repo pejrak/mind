@@ -7,16 +7,21 @@ div
       variant="secondary"
     )
       pre {{ userPublicKey }}
-      b-button(
-        variant='primary'
-        @click='triggerPublicKeyEdit'
-      ) Edit
+      b-button-group
+        b-button(
+          variant='primary'
+          @click='triggerPublicKeyEdit'
+        ) Edit
+        b-button(
+          variant='danger'
+          @click='triggerPublicKeyDelete'
+        ) Delete
   div(v-else)
     fragment-encryption-setup
 
 </template>
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import FragmentEncryptionSetup from './FragmentEncryptionSetup.vue'
 export default {
   components: {
@@ -34,8 +39,16 @@ export default {
     ...mapMutations('authentication', [
       'setPublicKey'
     ]),
+    ...mapActions('authentication', [
+      'deletePublicKey'
+    ]),
     triggerPublicKeyEdit() {
       this.setPublicKey('')
+    },
+    triggerPublicKeyDelete() {
+      if (confirm('Proceed with public key removal?')) {
+        this.deletePublicKey()
+      }
     },
   }
 }

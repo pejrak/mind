@@ -8,6 +8,40 @@ div
   .spacer
   div(v-if="setupMode === 'service'")
     h5 Service
+    b-alert(
+      show
+      variant="info"
+    ) You will need to set a password for your new key.
+      |  The password will not be stored by this service.
+      |  You will need to remember it.
+    .spacer
+    b-form-group(
+      :state="passwordInputState"
+      :invalid-feedback="invalidPasswordInputLabel"
+    )
+      b-input-group(
+        prepend="*"
+      )
+        b-form-input(
+          type="password"
+          v-model="passwordInput"
+          :state="passwordInputState"
+        )
+    b-form-group(
+      :state="passwordRepeatInputState"
+      invalid-feedback="Passwords have to match."
+    )
+      b-input-group(
+        prepend="*"
+      )
+        b-form-input(
+          type="password"
+          v-model="passwordRepeatInput"
+          :state="passwordRepeatInputState"
+        )
+    b-button(
+      @click="triggerKeyGeneration"
+    ) Obtain keys
   div(v-else-if="setupMode === 'import'")
     h5 Import
     b-textarea(
@@ -26,30 +60,69 @@ div
 
 <script>
 import { mapActions } from 'vuex'
+const PWD_CHAR_LIMITS = {
+  max: 200,
+  min: 6,
+}
+
 export default {
   computed: {
+    invalidPasswordInputLabel() {
+      return (
+        'Password has to be between ' +
+        `${PWD_CHAR_LIMITS.min} and ${PWD_CHAR_LIMITS.max} long.`
+      )
+    },
     keyImportInputValid() {
       return (
         this.keyImportInput.length > 10 &&
         this.keyImportInput.length < 1000
       )
     },
+    passwordInputEmpty() {
+      return this.passwordInput === ''
+    },
+    passwordsMatch() {
+      return (
+        this.passwordInput === this.passwordRepeatInput
+      )
+    },
+    passwordInputIsValid() {
+      return (
+        this.passwordInput.length >= PWD_CHAR_LIMITS.min &&
+        this.passwordInput.length <= PWD_CHAR_LIMITS.max
+      )
+    },
+    passwordInputState() {
+      return (
+        this.passwordInputEmpty ? null : this.passwordInputIsValid
+      )
+    },
+    passwordRepeatInputState() {
+      return (
+        this.passwordInputEmpty ? null : this.passwordsMatch
+      )
+    },
     setupOptions() {
       return [
         { value: 'service', text: 'Generate via this service' },
-        { value: 'import', text: 'Import existing key' },
+        // { value: 'import', text: 'Import existing key' },
       ]
     },
   },
   data() {
     return {
       keyImportInput: '',
+      passwordInput: '',
+      passwordRepeatInput: '',
+      PWD_CHAR_LIMITS,
       setupMode: 'service',
     }
   },
   methods: {
     ...mapActions('authentication', [
       'importKey',
+      'generateKey',
     ]),
     async triggerKeyImport() {
       const success = await this.importKey(this.keyImportInput)
@@ -57,6 +130,9 @@ export default {
       if (success) {
         this.keyImportInput = ''
       }
+    },
+    async triggerKeyGeneration() {
+      await this.generateKey(this.passwordInput)
     },
   }
 }

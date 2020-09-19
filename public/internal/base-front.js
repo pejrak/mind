@@ -423,9 +423,9 @@ var MIND = (function() {
       }
     }
     return {
-      parsing_error: parsing_error,
-      parsed_content: parsed_content,
-      is_encrypted: is_encrypted
+      parsing_error,
+      parsed_content,
+      is_encrypted
     }
   }
 
