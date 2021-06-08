@@ -76,9 +76,6 @@ export default {
       'moreThanOneFragmentPath',
       'selectedFragmentPathTitle',
     ]),
-    fragments() {
-      return generateMockFragments(10)
-    },
     searchAllPathsInput: {
       get() {
         return this.searchAllPaths
@@ -125,6 +122,5 @@ export default {
 <style>
 .fragment-container {
   min-width: 5em;
-
 }
 </style>

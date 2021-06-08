@@ -4,7 +4,7 @@ div
     b-input-group-prepend
       b-input-group-text
         b-icon-search
-        span Components
+        span Component
     b-input(
       type="text"
       v-model="componentSearchInput"
@@ -95,7 +95,7 @@ export default {
       }
     },
     submitNewPath() {
-      this.createFragmentPath([ ...this.pathComponents ])
+      this.createFragmentPath([...this.pathComponents])
       this.pathComponents = []
       this.$emit('submitted')
     },
