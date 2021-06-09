@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-undef */
 MIND.front = (function() {
   var containers = {
     extraction_modal_id: 'mind-extraction-modal',

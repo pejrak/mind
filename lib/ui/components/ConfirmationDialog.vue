@@ -1,6 +1,6 @@
 <template lang="pug">
 b-modal(
-  ref='confirmationDialogModal'
+  :ref='confirmationDialogModalId'
   :ok-title="confirmTitle || 'Yes'"
   :ok-only="confirmOnly"
   :title="dialogTitle || 'Confirmation required'"
@@ -15,9 +15,11 @@ b-modal(
   slot
 </template>
 <script>
+const confirmationDialogModalId = 'confirmationDialogModal'
 export default {
   data() {
     return {
+      confirmationDialogModalId,
       confirmFn: null,
       cancelFn: null,
       defaultConfirmationMessage: 'OK to proceed?'
@@ -25,12 +27,12 @@ export default {
   },
   methods: {
     show() {
-      this.$refs['confirmationDialogModal'].show()
+      this.$refs[confirmationDialogModalId].show()
 
       return this
     },
     hide() {
-      this.$refs['confirmationDialogModal'].hide()
+      this.$refs[confirmationDialogModalId].hide()
 
       return this
     },

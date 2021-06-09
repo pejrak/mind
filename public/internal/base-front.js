@@ -1,11 +1,14 @@
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-undef */
+/* eslint-disable camelcase */
 var MIND = (function() {
-  var current_user = "none"
-  var mem_pointer = "mind_snapshot"
+  var current_user = 'none'
+  var mem_pointer = 'mind_snapshot'
   var cache = {}
 
   function checkCurrentUser() {
-    current_user_data = $("body").attr("data-user")
-    if (current_user_data && current_user_data !== "none") {
+    current_user_data = $('body').attr('data-user')
+    if (current_user_data && current_user_data !== 'none') {
       current_user = current_user_data
     }
     MIND.current_user = current_user
@@ -16,93 +19,92 @@ var MIND = (function() {
     options = options || {}
     if (message && message.length) {
       var fadeout_delay = options.delay || 3000
-      var notification_id = options.id || "notification_" + Date.now()
-      var content = render("notification_tmpl", {
-            id: notification_id,
-            message: message
-          })
+      var notification_id = options.id || 'notification_' + Date.now()
+      var content = render('notification_tmpl', {
+        id: notification_id,
+        message: message
+      })
 
-      $("#notifications").append(content)
+      $('#notifications').append(content)
       setTimeout(function() {
-        $("#" + notification_id).fadeOut(1000).remove()
+        $('#' + notification_id).fadeOut(1000).remove()
       }, fadeout_delay)
     }
   }
 
   function fDate(date_int) {
     var date = new Date(date_int || Date.now())
-    var hour = ("0" + date.getHours()).slice(-2)
-    var minute = ("0" + date.getMinutes()).slice(-2)
-    var month = ("0" + (date.getMonth() + 1)).slice(-2)
-    var day = ("0" + date.getDate()).slice(-2)
+    var hour = ('0' + date.getHours()).slice(-2)
+    var minute = ('0' + date.getMinutes()).slice(-2)
+    var month = ('0' + (date.getMonth() + 1)).slice(-2)
+    var day = ('0' + date.getDate()).slice(-2)
     var year = date.getFullYear()
 
     return (
-      hour + ":" + minute + ", " + day + "-" + month + "-" + year
+      hour + ':' + minute + ', ' + day + '-' + month + '-' + year
     )
   }
 
-
   var Memory = (function() {
-    var LIMITS        = {
+    var LIMITS = {
       fragment_len: [2, 5000],
       enc_pwd_len: [2, 100],
       note_len: [2, 1000]
     }
-    var DEFS          = {
+    var DEFS = {
       fragment: {
         id: {
-          type: "integer",
+          type: 'integer',
           exports: true
         },
         text: {
-          type: "string",
+          type: 'string',
           exports: true
         },
         owner: {
-          type: "string",
+          type: 'string',
           exports: true
         },
         memorized: {
-          type: "boolean",
+          type: 'boolean',
           exports: true
         },
         created_at: {
-          type: "integer",
+          type: 'integer',
           exports: true
         },
         updatedAt: {
-          type: "integer",
+          type: 'integer',
           exports: true
         },
         path: {
-          type: "array",
+          type: 'array',
           exports: true
         },
         notes: {
-          type: "array",
+          type: 'array',
           exports: true
         }
       }
     }
-    var BASIC_PATHS   = [["temporary"]]
-    var fragments     = []
-    var removed       = []
-    var initiated_at  = Date.now()
-    var validate      = {
+    var BASIC_PATHS = [['temporary']]
+    var fragments = []
+    var removed = []
+    var initiated_at = Date.now()
+    var validate = {
       fragment: function(text) {
         var passing = (
-              typeof(text) === "string" &&
+          typeof (text) === 'string' &&
               text.length > LIMITS.fragment_len[0] &&
               text.length < LIMITS.fragment_len[1]
-            )
+        )
 
         return {
           pass: passing,
           message: (
-            "Submittal needs to be between " +
-              LIMITS.fragment_len[0] + " and " + LIMITS.fragment_len[1] + " " +
-            "characters."
+            'Submittal needs to be between ' +
+              LIMITS.fragment_len[0] + ' and ' + LIMITS.fragment_len[1] + ' ' +
+            'characters.'
           )
         }
       },
@@ -111,39 +113,39 @@ var MIND = (function() {
           pass: (
             path instanceof Array && path.length
           ),
-          message: "Path assignment invalid."
+          message: 'Path assignment invalid.'
         }
       },
       memory: function(text, path) {
-        //TODO: var existing_in_path = []
+        // TODO: var existing_in_path = []
         return {
           pass: true,
-          message: "Text must be unique in path."
+          message: 'Text must be unique in path.'
         }
       },
       note: function(note) {
-        var note_len = (note.text || "").length
-        MIND.log("validate | note:", note)
+        var note_len = (note.text || '').length
+        MIND.log('validate | note:', note)
         return {
           pass: (
             note.parent_id > 0 &&
             note_len > LIMITS.note_len[0] &&
             note_len < LIMITS.note_len[1]
           ),
-          message: "Invalid note submitted."
+          message: 'Invalid note submitted.'
         }
       }
     }
 
     function Fragment(options) {
-      var text        = options.text
-      var path        = options.path
-      var now         = Date.now()
-      var created_at  = options.created_at || now
-      var updatedAt  = options.updatedAt || now
-      var id          = options.id || now
-      var owner       = options.owner || MIND.Memory.owner
-      var notes       = options.notes || []
+      var text = options.text
+      var path = options.path
+      var now = Date.now()
+      var created_at = options.created_at || now
+      var updatedAt = options.updatedAt || now
+      var id = options.id || now
+      var owner = options.owner || MIND.Memory.owner
+      var notes = options.notes || []
 
       return {
         id,
@@ -180,8 +182,8 @@ var MIND = (function() {
       fragment = cleanFragment(fragment)
       if (fragmentIsUnique(fragment)) {
         if (source && (
-            !fragment.load_source || fragment.load_source !== source
-          )
+          !fragment.load_source || fragment.load_source !== source
+        )
         ) {
           fragment.load_source = source
         }
@@ -189,30 +191,28 @@ var MIND = (function() {
         // Add to index for searching
         MIND.index.add({
           id: fragment.id,
-          path: fragment.path.join(" "),
+          path: fragment.path.join(' '),
           text: fragment.text
         })
-      }
-      else {
+      } else {
         fragment.duplicate = true
       }
-     }
+    }
 
     function recall(source, filter) {
       var extraction = {
-            initiated_at: initiated_at,
-            extracted_at: Date.now(),
-            paths: Memory.paths,
-            removed: removed,
-            preferences: MIND.front.getPreferences(),
-            owner: current_user,
-            source: (source || "local")
-          }
+        initiated_at: initiated_at,
+        extracted_at: Date.now(),
+        paths: Memory.paths,
+        removed: removed,
+        preferences: MIND.front.getPreferences(),
+        owner: current_user,
+        source: (source || 'local')
+      }
 
       if (filter) {
         // We will be filtering here
-      }
-      else {
+      } else {
         extraction.fragments = fragments
       }
 
@@ -220,12 +220,12 @@ var MIND = (function() {
     }
 
     function add(text, path) {
-      var validation_errors   = []
-      var text_valid          = validate.fragment(text)
-      var path_valid          = validate.path(path)
-      var mem_valid           = validate.memory(text, path)
-      var validations         = [text_valid, path_valid, mem_valid]
-      var is_valid            = true
+      var validation_errors = []
+      var text_valid = validate.fragment(text)
+      var path_valid = validate.path(path)
+      var mem_valid = validate.memory(text, path)
+      var validations = [text_valid, path_valid, mem_valid]
+      var is_valid = true
 
       validations.forEach(function(validation) {
         if (!validation.pass) {
@@ -235,12 +235,11 @@ var MIND = (function() {
       })
       // Check validity of the fragment
       if (is_valid) {
-        merge(Fragment({ text: text, path: path }), "local")
+        merge(Fragment({ text: text, path: path }), 'local')
         return {
           success: true
         }
-      }
-      else {
+      } else {
         return {
           validation_errors: validation_errors
         }
@@ -249,9 +248,9 @@ var MIND = (function() {
 
     function addNote(options) {
       var validation = validate.note(options)
-      var result     = {
+      var result = {
         success: false,
-        message: "Adding note failed."
+        message: 'Adding note failed.'
       }
 
       if (validation.pass) {
@@ -266,21 +265,19 @@ var MIND = (function() {
             updatedAt: Date.now()
           })
           result.success = true
-          result.message = "Note added."
+          result.message = 'Note added.'
+        } else {
+          result.message = 'Unable to associate note to fragment.'
         }
-        else {
-          result.message = "Unable to associate note to fragment."
-        }
-      }
-      else {
-        result.message = "Incorrect note format."
+      } else {
+        result.message = 'Incorrect note format.'
       }
       return result
     }
 
     function get(fragment_id) {
       var match
-      var matches = fragments.filter(function(fragment) {
+      fragments.filter(function(fragment) {
         var matching = (fragment.id === fragment_id)
 
         if (matching) match = fragment
@@ -364,7 +361,7 @@ var MIND = (function() {
       BASIC_PATHS,
       paths: BASIC_PATHS.slice(0)
     }
-  } ())
+  }())
 
   // Add path to memory, first check if it is unique
   function addPath(path) {
@@ -380,7 +377,7 @@ var MIND = (function() {
     var mem_len = Memory.fragments.length
 
     if (mem_len) {
-      MIND.log("saveMemorySnapshot | mem_len:", mem_len)
+      MIND.log('saveMemorySnapshot | mem_len:', mem_len)
       localStorage.setItem(mem_pointer, JSON.stringify(Memory.recall()))
     }
   }
@@ -405,21 +402,19 @@ var MIND = (function() {
     var is_encrypted
 
     if (
-      content && typeof(content) === "string" &&
+      content && typeof (content) === 'string' &&
       content.length
     ) {
       try {
         parsed_content = JSON.parse(content)
-      }
-      catch (error) {
+      } catch (error) {
         parsing_error = error
-      }
-      finally {
+      } finally {
         is_encrypted = (
-          parsed_content && typeof(parsed_content) === "object" &&
-          parsed_content.hasOwnProperty("cipher") &&
-          parsed_content.hasOwnProperty("ct")
-        );
+          parsed_content && typeof (parsed_content) === 'object' &&
+          parsed_content.hasOwnProperty('cipher') &&
+          parsed_content.hasOwnProperty('ct')
+        )
       }
     }
     return {
@@ -432,29 +427,26 @@ var MIND = (function() {
   function loadMemorySnapshot(provided_str) {
     var snapshot_str = provided_str || localStorage.getItem(mem_pointer)
 
-    MIND.log("loadMemorySnapshot | snapshot_str:", snapshot_str)
+    MIND.log('loadMemorySnapshot | snapshot_str:', snapshot_str)
     if (
-      snapshot_str && typeof(snapshot_str) === "string" &&
+      snapshot_str && typeof (snapshot_str) === 'string' &&
       snapshot_str.length
     ) {
       var snapshot
       var parsing_error
       try {
         snapshot = JSON.parse(snapshot_str)
-      }
-      catch (error) {
+      } catch (error) {
         parsing_error = error
-      }
-      finally {
+      } finally {
         if (validSnapshot(snapshot)) {
           mergeMemory(snapshot)
           if (snapshot.preferences) {
             MIND.front.applyPreferences(snapshot.preferences)
           }
-        }
-        else {
-          notify("Unable to load memory. " + (
-            parsing_error ? "Memory is corrupt." : ""))
+        } else {
+          notify('Unable to load memory. ' + (
+            parsing_error ? 'Memory is corrupt.' : ''))
         }
       }
     }
@@ -463,7 +455,7 @@ var MIND = (function() {
   // Validate snapshot in order to merge it
   function validSnapshot(snapshot) {
     return (
-      snapshot && typeof(snapshot) === "object" &&
+      snapshot && typeof (snapshot) === 'object' &&
       snapshot.fragments && snapshot.fragments.length
     )
   }
@@ -486,18 +478,17 @@ var MIND = (function() {
 
   // To merge fragments from loaded memory snapshot
   function mergeMemory(snapshot, source) {
-    var source = (source || snapshot.source || "local")
+    source = (source || snapshot.source || 'local')
 
     // Merge removed fragment ids history with current snapshot
     Memory.removed = _.union(Memory.removed, snapshot.removed || [])
     snapshot.fragments.forEach(function(fragment, fidx) {
       // If this fragment has not been removed, merge it into memory
       if (Memory.removed.indexOf(fragment.id) === -1) {
-        MIND.log("mergeMemory | fragment:", fragment)
+        MIND.log('mergeMemory | fragment:', fragment)
         Memory.merge(fragment, source)
-      }
-      else {
-        MIND.log("mergeMemory | removed fragment:", fragment)
+      } else {
+        MIND.log('mergeMemory | removed fragment:', fragment)
       }
     })
     if (snapshot.paths) snapshot.paths.forEach(addPath)
@@ -508,8 +499,8 @@ var MIND = (function() {
 
   function log() {
     var log_enabled = (
-          $("#content").attr("data-system-environment") === "development"
-        )
+      $('#content').attr('data-system-environment') === 'development'
+    )
 
     if (log_enabled) {
       var args = Array.prototype.slice.call(arguments)
@@ -521,7 +512,7 @@ var MIND = (function() {
   function timeIt(execFunction, delay) {
     // Set custom timer name, if function does not have a name, it will be just
     // the appended string
-    var timer_name = execFunction.name + "_delayed_timer"
+    var timer_name = execFunction.name + '_delayed_timer'
     // Set default to 350 ms, which seems to be a good starting point
     delay = (delay || 350)
     // Clear previous timer if one is set
@@ -532,34 +523,34 @@ var MIND = (function() {
     cache[timer_name] = setTimeout(execFunction, delay)
   }
 
-
   // Simple JavaScript Templating
   // John Resig - http://ejohn.org/ - MIT Licensed
   var tmpl_cache = {}
   var render = function render(str, data) {
     // Figure out if we're getting a template, or if we need to
     // load the template - and be sure to cache the result.
-    var fn = !/\W/.test(str) ?
-      tmpl_cache[str] = tmpl_cache[str] ||
-        render(document.getElementById(str).innerHTML) :
+    var fn = !/\W/.test(str)
+      ? tmpl_cache[str] = tmpl_cache[str] ||
+        render(document.getElementById(str).innerHTML)
       // Generate a reusable function that will serve as a template
       // generator (and which will be cached).
-      new Function("obj",
-        "var p=[],print=function(){p.push.apply(p,arguments);};" +
+      // eslint-disable-next-line no-new-func
+      : new Function('obj',
+        'var p=[],print=function(){p.push.apply(p,arguments);};' +
 
         // Introduce the data as local variables using with(){}
         "with(obj){p.push('" +
 
         // Convert the template into pure J[1:23:57 PM] Matthew Perkins: so conneccted vpn to HK and it worksavaScript
         str
-          .replace(/[\r\t\n]/g, " ")
-          .split("{").join("\t")
-          .replace(/((^|\})[^\t]*)'/g, "$1\r")
+          .replace(/[\r\t\n]/g, ' ')
+          .split('{').join('\t')
+          .replace(/((^|\})[^\t]*)'/g, '$1\r')
           .replace(/\t\$(.*?)\}/g, "',$1,'")
-          .split("\t").join("');")
-          .split("}").join("p.push('")
-          .split("\r").join("\\'")
-      + "');}return p.join('');")
+          .split('\t').join("');")
+          .split('}').join("p.push('")
+          .split('\r').join("\\'") +
+      "');}return p.join('');")
     // Provide some basic currying to the user
 
     return (data ? fn(data) : fn)
@@ -572,11 +563,11 @@ var MIND = (function() {
   // Base 64 enc, got from
   // https://developer.mozilla.org/en-US/docs/Web/API/WindowBase64/btoa#Unicode_Strings
   function toBase(str) {
-    return window.btoa(unescape(encodeURIComponent(str)));
+    return window.btoa(unescape(encodeURIComponent(str)))
   }
 
   function fromBase(str) {
-    return decodeURIComponent(escape(window.atob(str)));
+    return decodeURIComponent(escape(window.atob(str)))
   }
 
   // Export reusable for MIND.front and other accessors
@@ -601,4 +592,4 @@ var MIND = (function() {
     saveMemorySnapshot: saveMemorySnapshot,
     checkCurrentUser: checkCurrentUser
   }
-} ())
+}())
