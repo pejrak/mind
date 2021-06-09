@@ -7,16 +7,18 @@ div
     fixed="top"
   )
     b-navbar-brand Mind
-    main-navigation
+    MainNavigation
     b-navbar-nav
-      fragment-path-selection
-    authentication-navigation
-  main-content
+      MainMemoryControls
+      FragmentPathSelection
+    AuthenticationNavigation
+  MainContent
 </template>
 
 <script>
 import AuthenticationNavigation from '../authentication/components/AuthenticationNavigation.vue'
 import FragmentPathSelection from '../fragmentPaths/components/FragmentPathSelection.vue'
+import MainMemoryControls from './components/MainMemoryControls.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
 import { mapActions } from 'vuex'
@@ -25,8 +27,9 @@ export default {
   components: {
     AuthenticationNavigation,
     FragmentPathSelection,
-    MainNavigation,
     MainContent,
+    MainMemoryControls,
+    MainNavigation,
   },
   mounted() {
     this.getUser()

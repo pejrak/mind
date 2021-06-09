@@ -199,21 +199,16 @@ var MIND = (function() {
       }
     }
 
-    function recall(source, filter) {
+    function recall(source) {
       var extraction = {
         initiated_at: initiated_at,
         extracted_at: Date.now(),
+        fragments,
         paths: Memory.paths,
-        removed: removed,
+        removed,
         preferences: MIND.front.getPreferences(),
         owner: current_user,
         source: (source || 'local')
-      }
-
-      if (filter) {
-        // We will be filtering here
-      } else {
-        extraction.fragments = fragments
       }
 
       return extraction
