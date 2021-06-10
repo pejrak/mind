@@ -1,5 +1,6 @@
 node_modules/
 config/config.js
+conf/
 data/
 dump.rdb
 tmp/
