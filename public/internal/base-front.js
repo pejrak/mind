@@ -409,7 +409,7 @@ var MIND = (function() {
       content.length
     ) {
       try {
-        parsed_content = JSON.parse(content)
+        parsed_content = JSON.parse(decodeURI(content))
       }
       catch (error) {
         parsing_error = error

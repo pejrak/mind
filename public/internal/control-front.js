@@ -366,7 +366,7 @@ MIND.front = (function() {
         if (data.is_encrypted) {
           var to_parse = decrypt(JSON.stringify(data.parsed_content))
           if (to_parse && to_parse.length) {
-            loaded_memory = JSON.parse(to_parse)
+            loaded_memory = JSON.parse(decodeURI(to_parse))
           }
         }
         else {
@@ -784,7 +784,7 @@ MIND.front = (function() {
     var enc_pwd = $("#extraction-password").val()
     var storage_selection = $("#extraction-target-select").val()
     var memory_recall = MIND.Memory.recall(storage_selection)
-    var extract_str = JSON.stringify(memory_recall)
+    var extract_str =  encodeURI(JSON.stringify(memory_recall))
     var content_extract
 
     MIND.log("extractSubmit | enc_pwd, extract_str, memory_recall:", enc_pwd, extract_str, memory_recall)
