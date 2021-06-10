@@ -20,6 +20,7 @@ div
 import { mapActions } from 'vuex'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
 import { fragmentsImportValid } from '../fragmentsImportValid'
+import { decode } from 'js-base64'
 
 export default {
   components: {
@@ -39,7 +40,7 @@ export default {
     parseImportContent(payload) {
       let content
       try {
-        content = JSON.parse(payload)
+        content = JSON.parse(decode(payload))
       } catch (error) {
         console.error('Error when parsing import file:', error)
       }
