@@ -1,5 +1,7 @@
 node_modules/
 conf/config.js
+config/
 data/
 dump.rdb
 tmp/
+public/internal/*-bundle.*
