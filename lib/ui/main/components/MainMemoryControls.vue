@@ -5,7 +5,6 @@ div
   )
   b-button-group
     b-button(
-      v-if='secretIsSet'
       variant='primary'
       @click='triggerMemorySave'
     ) Save
@@ -32,9 +31,6 @@ export default {
     FragmentImportDialog,
   },
   computed: {
-    ...mapGetters('authentication', [
-      'secretIsSet',
-    ]),
     ...mapGetters('fragments', [
       'memoryIsEmpty',
     ]),
@@ -57,8 +53,9 @@ export default {
       await this.save()
     },
     async triggerMemoryPurge() {
-      console.info('triggerMemoryPurge')
-      await this.purge()
+      const success = await this.purge()
+      console.info('triggerMemoryPurge', success)
+      return success
     },
   },
 }

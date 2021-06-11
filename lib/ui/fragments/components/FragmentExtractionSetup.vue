@@ -12,7 +12,6 @@ export default {
   computed: {
     ...mapGetters('authentication', [
       'hasExtractionSetup',
-      'secretIsSet',
     ]),
     ...mapState('authentication', [
       'userPublicKey'
