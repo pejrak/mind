@@ -1,10 +1,10 @@
 <template lang="pug">
 b-modal(
-  id="fragment-extraction-setup"
+  id="fragmentExtractionSetupModal"
   title="Extraction setup"
   :ok-only="true"
 )
-  fragment-extraction-setup
+  FragmentExtractionSetup
 </template>
 
 <script>

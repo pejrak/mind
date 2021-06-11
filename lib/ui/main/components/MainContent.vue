@@ -1,6 +1,7 @@
 <template lang="pug">
 div
-  fragment-extraction-modal
+  FragmentExtractionModal
+  FragmentLoadModal
   b-button(
     v-if='!showNewFragmentForm'
     block
@@ -23,6 +24,7 @@ div
 
 <script>
 import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
+import FragmentLoadModal from '../../fragments/components/FragmentLoadModal.vue'
 import FragmentList from '../../fragments/components/FragmentList.vue'
 import NewFragmentInput from '../../fragments/components/NewFragmentInput.vue'
 
@@ -30,6 +32,7 @@ export default {
   components: {
     FragmentExtractionModal,
     FragmentList,
+    FragmentLoadModal,
     NewFragmentInput,
   },
   data() {
