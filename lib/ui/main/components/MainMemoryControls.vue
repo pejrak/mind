@@ -3,8 +3,16 @@ div
   b-button-group
     b-button(
       variant='primary'
+      v-b-modal="`fragmentLoadModal`"
+    )
+      b-icon-cloud-arrow-up
+      | Load
+    b-button(
+      variant='primary'
       @click='triggerMemorySave'
-    ) Save
+    )
+      b-icon-cloud-arrow-down
+      | Save
     b-button(
       :disabled='memoryIsEmpty'
       variant='danger'
@@ -27,14 +35,17 @@ export default {
       'save',
       'purge',
     ]),
-    async triggerMemorySave() {
-      console.info('triggerMemorySave')
-      await this.save()
+    async triggerMemoryLoad() {
+      console.info('triggerMemoryLoad')
     },
     async triggerMemoryPurge() {
       const success = await this.purge()
       console.info('triggerMemoryPurge', success)
       return success
+    },
+    async triggerMemorySave() {
+      console.info('triggerMemorySave')
+      await this.save()
     },
   },
 }
