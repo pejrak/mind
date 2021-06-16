@@ -8,17 +8,12 @@ div
   )
     b-navbar-brand Mind
     MainNavigation
-    b-navbar-nav
-      MainMemoryControls
-      FragmentPathSelection
     AuthenticationNavigation
   MainContent
 </template>
 
 <script>
 import AuthenticationNavigation from '../authentication/components/AuthenticationNavigation.vue'
-import FragmentPathSelection from '../fragmentPaths/components/FragmentPathSelection.vue'
-import MainMemoryControls from './components/MainMemoryControls.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
 import { mapActions } from 'vuex'
@@ -26,9 +21,7 @@ import { mapActions } from 'vuex'
 export default {
   components: {
     AuthenticationNavigation,
-    FragmentPathSelection,
     MainContent,
-    MainMemoryControls,
     MainNavigation,
   },
   mounted() {

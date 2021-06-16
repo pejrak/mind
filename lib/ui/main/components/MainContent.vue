@@ -1,6 +1,5 @@
 <template lang="pug">
 div
-  FragmentExtractionModal
   FragmentLoadModal
   b-button(
     v-if='!showNewFragmentForm'
@@ -11,7 +10,7 @@ div
     v-model="showNewFragmentForm"
   )
     b-jumbotron.main-jumbotron
-      new-fragment-input
+      NewFragmentInput
       .float-right
         b-button(
           @click='showNewFragmentForm = false'
@@ -19,18 +18,18 @@ div
           b-icon-eye-slash
           span Hide
       .spacer
-  fragment-list
+  FragmentList
 </template>
 
 <script>
-import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
+// import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
 import FragmentLoadModal from '../../fragments/components/FragmentLoadModal.vue'
 import FragmentList from '../../fragments/components/FragmentList.vue'
 import NewFragmentInput from '../../fragments/components/NewFragmentInput.vue'
 
 export default {
   components: {
-    FragmentExtractionModal,
+    // FragmentExtractionModal,
     FragmentList,
     FragmentLoadModal,
     NewFragmentInput,

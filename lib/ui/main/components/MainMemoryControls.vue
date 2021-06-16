@@ -1,25 +1,29 @@
 <template lang="pug">
-div
-  b-button-group
-    b-button(
+b-button-group
+  b-dropdown(
+    split
+    @click='triggerMemoryLoad'
+    text='Load'
+  )
+    b-dropdown-item-button(
       variant='primary'
       v-b-modal="`fragmentLoadModal`"
     )
       b-icon-cloud-arrow-up
-      | Load
-    b-button(
-      variant='primary'
-      @click='triggerMemorySave'
-    )
-      b-icon-cloud-arrow-down
-      | Save
-    b-button(
-      :disabled='memoryIsEmpty'
-      variant='danger'
-      @click='triggerMemoryPurge'
-    )
-      b-icon-cloud-slash
-      | Clear
+      | Load options
+  b-button(
+    variant='success'
+    @click='triggerMemorySave'
+  )
+    b-icon-cloud-arrow-down
+    | Save
+  b-button(
+    :disabled='memoryIsEmpty'
+    variant='danger'
+    @click='triggerMemoryPurge'
+  )
+    b-icon-cloud-slash
+    | Clear
 </template>
 
 <script>
@@ -32,11 +36,13 @@ export default {
   },
   methods: {
     ...mapActions('fragments', [
+      'load',
       'save',
       'purge',
     ]),
     async triggerMemoryLoad() {
-      console.info('triggerMemoryLoad')
+      const success = await this.load()
+      console.info('triggerMemoryLoad', success)
     },
     async triggerMemoryPurge() {
       const success = await this.purge()
