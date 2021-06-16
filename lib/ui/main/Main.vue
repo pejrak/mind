@@ -5,6 +5,7 @@ div
     variant="primary"
     type="dark"
     fixed="top"
+    toggleable="md"
   )
     b-navbar-brand Mind
     MainNavigation

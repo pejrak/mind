@@ -45,7 +45,6 @@ export default {
         console.error('Error when parsing import file:', error)
       }
 
-      console.info('parsed content', content)
       return content
     },
     triggerImport() {
@@ -54,16 +53,12 @@ export default {
         reader.onload = event => {
           const content = this.parseImportContent(event.target.result)
           const importIsValid = fragmentsImportValid(content)
-          console.info('loaded file content', content, importIsValid)
           if (importIsValid) {
             this.merge(content)
           }
         }
         reader.readAsText(this.importFilePath)
-      } else {
-        console.info('No import file was selected.')
       }
-      console.info('import confirmed', this.importFilePath)
       this.$emit('submit', this.importFilePath)
     },
     show() {

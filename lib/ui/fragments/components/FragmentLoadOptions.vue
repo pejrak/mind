@@ -28,7 +28,6 @@ export default {
     ]),
     async triggerLoad() {
       const success = await this.load()
-      console.info('success', success)
       if (success) this.$emit('submit')
     },
   },

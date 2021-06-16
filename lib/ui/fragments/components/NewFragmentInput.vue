@@ -45,7 +45,6 @@ export default {
       'submitNewFragment',
     ]),
     async submitFragment() {
-      console.info('submitFragment')
       this.submitNewFragment()
     }
   }

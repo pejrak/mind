@@ -1,21 +1,24 @@
 <template lang="pug">
 b-button-group
   b-dropdown(
+    variant='primary'
     split
     @click='triggerMemoryLoad'
-    text='Load'
   )
+    template(#button-content)
+      b-icon-cloud-download
+      | Load
     b-dropdown-item-button(
       variant='primary'
       v-b-modal="`fragmentLoadModal`"
     )
-      b-icon-cloud-arrow-up
+      b-icon-cloud-arrow-down
       | Load options
   b-button(
     variant='success'
     @click='triggerMemorySave'
   )
-    b-icon-cloud-arrow-down
+    b-icon-cloud-upload
     | Save
   b-button(
     :disabled='memoryIsEmpty'
@@ -41,16 +44,12 @@ export default {
       'purge',
     ]),
     async triggerMemoryLoad() {
-      const success = await this.load()
-      console.info('triggerMemoryLoad', success)
+      await this.load()
     },
     async triggerMemoryPurge() {
-      const success = await this.purge()
-      console.info('triggerMemoryPurge', success)
-      return success
+      await this.purge()
     },
     async triggerMemorySave() {
-      console.info('triggerMemorySave')
       await this.save()
     },
   },

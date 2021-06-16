@@ -15,14 +15,22 @@ div
     b-input-group-prepend
       b-input-group-text
         b-icon-diagram2
-        span Path selection
-    b-select(
-      :options="availablePathOptions"
-      v-model="selected"
+        span Path
+    b-dropdown(
+      :text='selectedFragmentPathName'
     )
+      b-dropdown-item-button(
+        v-for='pathOption in availablePathOptions'
+        :key='`fragment-path-option-${pathOption.value}`'
+        @click='selectFragmentPath(pathOption.value)'
+      )
+        b-icon-diagram2
+        | {{ pathOption.text }}
     b-btn(
       @click="toggleFragmentPathSetup"
-  ) Add path
+    )
+      b-icon-record
+      | Add path
 </template>
 
 <script>

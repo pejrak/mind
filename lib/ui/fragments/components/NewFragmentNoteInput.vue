@@ -45,10 +45,9 @@ export default {
       'submitNewFragmentNote',
     ]),
     async submitNote() {
-      console.info('submitNote')
       this.submitNewFragmentNote(this.fragment.id)
     }
   },
-  props: [ 'fragment' ],
+  props: ['fragment'],
 }
 </script>
