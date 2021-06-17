@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  confirmation-dialog(
+  ConfirmationDialog(
     ref="fragment-path-setup"
     title="Fragment path setup"
     :confirmationMessage="false"
@@ -8,7 +8,7 @@ div
     confirmTitle="Close"
     :confirmOnly="true"
   )
-    fragment-path-setup(
+    FragmentPathSetup(
       @submitted="triggerSetupDialogExit"
     )
   b-input-group.offset-left

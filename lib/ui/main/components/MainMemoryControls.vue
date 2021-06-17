@@ -1,5 +1,11 @@
 <template lang="pug">
 b-button-group
+  a(
+    hidden
+    :href='exportContent'
+    :ref='exportLinkRef'
+    :download='exportFileName'
+  ) Downloader
   b-dropdown(
     variant='primary'
     split
@@ -14,6 +20,12 @@ b-button-group
     )
       b-icon-cloud-arrow-down
       | Load options
+    b-dropdown-item-button(
+      variant='primary'
+      @click='triggerMemoryExport'
+    )
+      b-icon-cloud-download-fill
+      | Export
   b-button(
     :disabled='!canSave'
     variant='success'
@@ -32,12 +44,25 @@ b-button-group
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+
 export default {
   computed: {
+    ...mapGetters('authentication', ['userEmailSnake']),
     ...mapGetters('fragments', [
       'canSave',
+      'encodedRecall',
       'memoryIsEmpty',
     ]),
+    exportLink() {
+      return this.$refs[this.exportLinkRef]
+    }
+  },
+  data() {
+    return {
+      exportContent: '#',
+      exportFileName: '',
+      exportLinkRef: 'exportLinkRef',
+    }
   },
   methods: {
     ...mapActions('fragments', [
@@ -45,6 +70,18 @@ export default {
       'save',
       'purge',
     ]),
+    async triggerMemoryExport() {
+      this.exportContent = (
+        `data:text/plain;charset=UTF-8,${this.encodedRecall}`
+      )
+      this.exportFileName = (
+        `recall_${Date.now()}_${this.userEmailSnake}.txt`
+      )
+      this.$nextTick(() => {
+        console.info('export', this.exportLink, this.userEmailSnake)
+        this.exportLink.click()
+      })
+    },
     async triggerMemoryLoad() {
       await this.load()
     },
