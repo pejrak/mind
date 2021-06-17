@@ -15,6 +15,7 @@ b-button-group
       b-icon-cloud-arrow-down
       | Load options
   b-button(
+    :disabled='!canSave'
     variant='success'
     @click='triggerMemorySave'
   )
@@ -34,6 +35,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   computed: {
     ...mapGetters('fragments', [
+      'canSave',
       'memoryIsEmpty',
     ]),
   },

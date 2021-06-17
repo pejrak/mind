@@ -15,7 +15,7 @@ div
     b-input-group-prepend
       b-input-group-text
         b-icon-diagram2
-        span Path
+        span Path ({{ availablePathOptions.length }})
     b-dropdown(
       :text='selectedFragmentPathName'
     )
