@@ -47,7 +47,10 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('authentication', ['userEmailSnake']),
+    ...mapGetters('authentication', [
+      'isAuthenticated',
+      'userEmailSnake',
+    ]),
     ...mapGetters('fragments', [
       'canSave',
       'encodedRecall',
@@ -83,7 +86,9 @@ export default {
       })
     },
     async triggerMemoryLoad() {
-      await this.load()
+      if (this.isAuthenticated) {
+        await this.load()
+      }
     },
     async triggerMemoryPurge() {
       await this.purge()
