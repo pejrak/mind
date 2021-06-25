@@ -28,7 +28,7 @@ html
 
     block head
 
-  body(data-user=(current_user ? current_user.email : 'none'))
+  body(data-user=(currentUser ? currentUser.email : 'none'))
     nav#menu.navbar.navbar-dark.fixed-top.bg-primary.navbar-expand-lg
       a.navbar-brand(href="#") Mind
       button.navbar-toggler(
@@ -44,8 +44,8 @@ html
       #navbar-menu.navbar-collapse.collapse
         ul#user-operators.nav.navbar-nav
           li.nav-item
-            if (current_user)
-              a.nav-link.mind-profile(href="#profile")  (#{current_user.email})
+            if (currentUser)
+              a.nav-link.mind-profile(href="#profile")  (#{currentUser.email})
             else
               a.nav-link(href="/login") Login
           li.nav-item
