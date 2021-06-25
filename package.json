@@ -55,7 +55,6 @@
     "pug-plain-loader": "^1.1.0",
     "redis": "^3.1.2",
     "redis-stream": "0.1.0",
-    "redis-streams": "1.1.0",
     "serve-favicon": "2.5.0",
     "sjcl": "1.0.8",
     "style-loader": "1.2.1",
