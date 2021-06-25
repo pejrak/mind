@@ -4,7 +4,7 @@
   "description": "quick storage",
   "main": "app.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack-cli --colors --config lib/ui/vue.bundler.js",
+    "build": "./node_modules/.bin/webpack-cli --config lib/ui/vue.bundler.js",
     "start": "DEBUG=mind* nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack serve --progress --config lib/ui/vue.bundler.js"
