@@ -8,15 +8,16 @@ b-container
     )
     b-col
       b-input-group
-        b-input-group-prepend
+        template(#prepend)
           b-input-group-text
             b-icon-search
-            span Search
-        b-input(
-          type='text'
-          v-model='searchQueryInput'
-        )
-        b-input-group-append
+            | Search
+        b-input-group-text
+          b-input(
+            type='text'
+            v-model='searchQueryInput'
+          )
+        template(#append)
           b-input-group-text
             b-checkbox(
               v-model='searchIncludeForgottenInput'

@@ -1,45 +1,50 @@
 <template lang="pug">
-b-button-group
+div
   a(
     hidden
     :href='exportContent'
     :ref='exportLinkRef'
     :download='exportFileName'
   ) Downloader
-  b-dropdown(
-    variant='primary'
-    split
-    @click='triggerMemoryLoad'
-  )
-    template(#button-content)
-      b-icon-cloud-download
-      | Load
-    b-dropdown-item-button(
-      variant='primary'
-      v-b-modal="`fragmentLoadModal`"
+  b-button-group
+    b-button(
+      href='/'
     )
-      b-icon-cloud-arrow-down
-      | Load options
-    b-dropdown-item-button(
-      variant='primary'
-      @click='triggerMemoryExport'
+      b-icon-house
+    b-dropdown(
+      split
+      :variant='loadButtonVariant'
+      @click='triggerMemoryLoad'
     )
-      b-icon-cloud-download-fill
-      | Export
-  b-button(
-    :disabled='!canSave'
-    variant='success'
-    @click='triggerMemorySave'
-  )
-    b-icon-cloud-upload
-    | Save
-  b-button(
-    :disabled='memoryIsEmpty'
-    variant='danger'
-    @click='triggerMemoryPurge'
-  )
-    b-icon-cloud-slash
-    | Clear
+      template(#button-content)
+        b-icon-cloud-download
+        | Load
+      b-dropdown-item-button(
+        variant='primary'
+        v-b-modal="`fragmentLoadModal`"
+      )
+        b-icon-cloud-arrow-down
+        | Load options
+      b-dropdown-item-button(
+        variant='primary'
+        @click='triggerMemoryExport'
+      )
+        b-icon-cloud-download-fill
+        | Export
+    b-button(
+      :disabled='!canSave'
+      variant='success'
+      @click='triggerMemorySave'
+    )
+      b-icon-cloud-upload
+      | Save
+    b-button(
+      :disabled='memoryIsEmpty'
+      variant='danger'
+      @click='triggerMemoryPurge'
+    )
+      b-icon-cloud-slash
+      | Clear
 </template>
 
 <script>
@@ -58,6 +63,9 @@ export default {
     ]),
     exportLink() {
       return this.$refs[this.exportLinkRef]
+    },
+    loadButtonVariant() {
+      return (this.isAuthenticated ? 'success' : 'default')
     }
   },
   data() {

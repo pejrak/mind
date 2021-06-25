@@ -4,8 +4,6 @@ const port = require('./lib/system/port')
 const app = require('./lib/server')()
 
 // Start http server listening
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), () => {
   LOG('(' + Config.name + ') application listening on port:', port)
 })
-
-

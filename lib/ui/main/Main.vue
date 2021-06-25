@@ -7,31 +7,54 @@ div
     fixed="top"
     toggleable="md"
   )
-    b-navbar-brand Mind
+    //- b-navbar-brand Mind
     MainNavigation
     AuthenticationNavigation
   MainContent
+  b-navbar(
+    href="#"
+    variant="secondary"
+    fixed="bottom"
+    toggleable="md"
+  )
+    BottomNavigation
 </template>
 
 <script>
 import AuthenticationNavigation from '../authentication/components/AuthenticationNavigation.vue'
+import BottomNavigation from './components/BottomNavigation.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
     AuthenticationNavigation,
+    BottomNavigation,
     MainContent,
     MainNavigation,
   },
-  mounted() {
-    this.getUser()
+  computed: {
+    ...mapGetters('authentication', [
+      'isAuthenticated',
+    ]),
+    ...mapGetters('fragments', [
+      'memoryIsEmpty',
+    ]),
+  },
+  async mounted() {
+    await this.getUser()
+    if (this.isAuthenticated && this.memoryIsEmpty) {
+      await this.load()
+    }
   },
   methods: {
     ...mapActions('authentication', [
       'getUser',
-    ])
+    ]),
+    ...mapActions('fragments', [
+      'load',
+    ]),
   },
 }
 </script>
@@ -41,6 +64,6 @@ export default {
   margin-right: .5em;
 }
 body {
-  padding-top: 4em;
+  padding: 4em 0;
 }
 </style>

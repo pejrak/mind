@@ -1,11 +1,13 @@
 <template lang="pug">
 div
   FragmentLoadModal
-  b-button(
-    v-if='!showNewFragmentForm'
-    block
-    @click='showNewFragmentForm = true'
-  ) Add memory
+  .text-center
+    b-button(
+      v-if='!showNewFragmentForm'
+      @click='showNewFragmentForm = true'
+    )
+      b-icon-bookmark-plus
+      | Add memory
   b-collapse(
     v-model="showNewFragmentForm"
   )
@@ -22,21 +24,19 @@ div
 </template>
 
 <script>
-// import FragmentExtractionModal from '../../fragments/components/FragmentExtractionModal.vue'
 import FragmentLoadModal from '../../fragments/components/FragmentLoadModal.vue'
 import FragmentList from '../../fragments/components/FragmentList.vue'
 import NewFragmentInput from '../../fragments/components/NewFragmentInput.vue'
 
 export default {
   components: {
-    // FragmentExtractionModal,
     FragmentList,
     FragmentLoadModal,
     NewFragmentInput,
   },
   data() {
     return {
-      showNewFragmentForm: false
+      showNewFragmentForm: false,
     }
   },
 }

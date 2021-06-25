@@ -12,25 +12,26 @@ div
       @submitted="triggerSetupDialogExit"
     )
   b-input-group.offset-left
-    b-input-group-prepend
-      b-input-group-text
-        b-icon-diagram2
-        span Path ({{ availablePathOptions.length }})
-    b-dropdown(
-      :text='selectedFragmentPathName'
-    )
-      b-dropdown-item-button(
-        v-for='pathOption in availablePathOptions'
-        :key='`fragment-path-option-${pathOption.value}`'
-        @click='selectFragmentPath(pathOption.value)'
+    b-input-group-text
+      b-icon-diagram2
+      span Path ({{ availablePathOptions.length }})
+    template(#append)
+      b-dropdown(
+        boundary='window'
+        :text='`Selected: ${selectedFragmentPathName}`'
       )
-        b-icon-diagram2
-        | {{ pathOption.text }}
-    b-btn(
-      @click="toggleFragmentPathSetup"
-    )
-      b-icon-record
-      | Add path
+        b-dropdown-item-button(
+          v-for='pathOption in availablePathOptions'
+          :key='`fragment-path-option-${pathOption.value}`'
+          @click='selectFragmentPath(pathOption.value)'
+        )
+          b-icon-diagram2
+          | {{ pathOption.text }}
+      b-btn(
+        @click="toggleFragmentPathSetup"
+      )
+        b-icon-node-plus-fill
+        | Add path
 </template>
 
 <script>

@@ -8,8 +8,9 @@ div
       size="sm"
     )
       b-button(
-        @click="triggerForget"
         v-if="!fragment.forgotten"
+        variant='primary'
+        @click="triggerForget"
       )
         b-icon-bookmark-dash
         span Forget
@@ -17,28 +18,28 @@ div
       b-button(
         v-else
         @click="triggerRecollect"
-        variant="primary"
+        variant="warning"
       )
         b-icon-bookmark-check
         span Recollect
 
-      b-button(@click="toggleNotes")
+      b-button(
+        variant='primary'
+        @click="toggleNotes"
+      )
         b-icon-journal
         span Notes
           span(
             v-if='fragment.notes.length'
           )  ({{ fragment.notes.length }})
 
-      b-button(@click="triggerRemoval")
+      b-button(
+        @click="triggerRemoval"
+        variant="danger"
+      )
         b-icon-trash
-        span Remove
+        | Remove
 
-    b-button-group(
-      size="sm"
-    )
-      b-button(disabled)
-        b-icon-diagram2
-        span {{ pathFormatted }}
 </template>
 
 <script>
@@ -53,8 +54,8 @@ export default {
     confirmationDialogReference() {
       return `removal-cofirmation-dialog-${this.fragment.id}`
     },
-    pathFormatted() {
-      return this.fragment.path.join(' - ')
+    hasNotes() {
+      return this.fragment.notes.length > 0
     },
   },
   methods: {
@@ -77,9 +78,7 @@ export default {
     },
     triggerRemoval() {
       this.$refs[this.confirmationDialogReference]
-        .show().onConfirm(() => {
-          this.removeFragment(this.fragment.id)
-        })
+        .show().onConfirm(() => this.removeFragment(this.fragment.id))
     },
   },
 }

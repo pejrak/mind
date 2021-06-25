@@ -8,6 +8,16 @@ b-card.fragment-card(
     @toggleNotes="toggleNotes"
   )
   p.fragment-text.text-break {{ fragment.text }}
+  .spacer
+    b-button-group(
+      size="sm"
+    )
+      b-button(
+        disabled
+        variant="outline-primary"
+      )
+        b-icon-diagram2
+        span {{ pathFormatted }}
   hr
   small.text-secondary
     span(
@@ -58,12 +68,15 @@ export default {
     ...mapState('authentication', [
       'userEmail'
     ]),
+    pathFormatted() {
+      return this.fragment.path.join(' - ')
+    },
     updatedAtFormatted() {
       return formatTime(this.fragment.updatedAt)
     },
     updatedLaterThanCreated() {
       return (this.fragment.updatedAt > this.fragment.createdAt)
-    }
+    },
   },
   data() {
     return {
