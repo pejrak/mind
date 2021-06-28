@@ -16,12 +16,8 @@ b-navbar-nav.ml-auto
 import { mapGetters, mapState } from 'vuex'
 export default {
   computed: {
-    ...mapGetters('authentication', [
-      'isAuthenticated'
-    ]),
-    ...mapState('authentication', [
-      'userEmail'
-    ])
-  }
+    ...mapGetters('authentication', ['isAuthenticated']),
+    ...mapState('authentication', ['userEmail']),
+  },
 }
 </script>
