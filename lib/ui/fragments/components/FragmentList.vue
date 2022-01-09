@@ -4,7 +4,7 @@ b-container
   br
   b-row
     b-col(
-      md="2"
+      md="1"
     )
     b-col
       b-input-group
@@ -28,7 +28,7 @@ b-container
               v-model='searchAllPathsInput'
             ) All paths
     b-col(
-      md="2"
+      md="1"
     )
   br
   b-row(
