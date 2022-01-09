@@ -17,7 +17,7 @@ export default {
    */
   computed: {
     timeLabel() {
-      return `${formatTime(this.note.updatedAt)}`
+      return `${formatTime(this.note.updated_at)}`
     },
   },
   props: ['note'],
