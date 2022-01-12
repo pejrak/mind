@@ -2,15 +2,18 @@
 div
   b-form-textarea(
     v-model="textInput"
-    placeholder="... text ..."
+    placeholder="Note text..."
     :state="newFragmentNoteTextState"
   )
   br
-  b-button(
-    :disabled="!newFragmentNoteTextIsValid"
-    variant="primary"
-    @click="submitFragmentNote"
-  ) Add
+  b-button-group
+    b-button(
+      :disabled="!newFragmentNoteTextIsValid"
+      variant="primary"
+      @click="submitNote"
+    ) Submit new note
+    b-button(@click="cancelAdding")
+      b-icon-x-square
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
@@ -30,10 +33,10 @@ export default {
     },
     textInput: {
       get() {
-        return this.newFragmentText
+        return this.newFragmentNoteText
       },
       set(value) {
-        this.setNewFragmentText(value)
+        this.setNewFragmentNoteText(value)
       }
     }
   },
@@ -44,9 +47,12 @@ export default {
     ...mapActions('fragments', [
       'submitNewFragmentNote',
     ]),
-    async submitNote() {
+    cancelAdding() {
+      this.$emit('cancel')
+    },
+    submitNote() {
       this.submitNewFragmentNote(this.fragment.id)
-    }
+    },
   },
   props: ['fragment'],
 }

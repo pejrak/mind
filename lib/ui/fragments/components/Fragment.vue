@@ -31,6 +31,17 @@ b-card.fragment-card(
     )  by #[strong.text-success me]
     span(v-else)  by #[strong {{ fragment.owner }}]
   .spacer
+  div(v-if='addingNote')
+    NewFragmentNoteInput(
+      :fragment='fragment'
+      @cancel='addingNote = false'
+    )
+  b-button(
+    v-else
+    @click='addingNote = true'
+    title='Add new note'
+  )
+    b-icon-journal-plus
   div(
     v-if='fragment.notes && fragment.notes.length > 0'
   )
@@ -39,11 +50,13 @@ b-card.fragment-card(
     fragment-notes(
       :fragment="fragment"
     )
+  small(v-else) No notes
 </template>
 <script>
 import { mapState } from 'vuex'
 import FragmentNotes from './FragmentNotes.vue'
 import FragmentToolbar from './FragmentToolbar.vue'
+import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
 
 const formatTime = require('../../../format/time')
 
@@ -63,6 +76,7 @@ export default {
   components: {
     FragmentNotes,
     FragmentToolbar,
+    NewFragmentNoteInput,
   },
   computed: {
     ...mapState('authentication', [
@@ -80,6 +94,7 @@ export default {
   },
   data() {
     return {
+      addingNote: false,
       showNotes: false,
     }
   },

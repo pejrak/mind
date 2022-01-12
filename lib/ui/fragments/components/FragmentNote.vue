@@ -23,3 +23,9 @@ export default {
   props: ['note'],
 }
 </script>
+
+<style>
+.note-text {
+  white-space: pre-wrap;
+}
+</style>
