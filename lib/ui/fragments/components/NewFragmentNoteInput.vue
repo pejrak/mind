@@ -52,6 +52,7 @@ export default {
     },
     submitNote() {
       this.submitNewFragmentNote(this.fragment.id)
+      this.textInput = ''
     },
   },
   props: ['fragment'],
