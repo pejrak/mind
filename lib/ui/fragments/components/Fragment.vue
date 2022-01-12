@@ -9,6 +9,7 @@ b-card.fragment-card(
   )
   p.fragment-text.text-break {{ fragment.text }}
   .spacer
+  b-button-toolbar
     b-button-group(
       size="sm"
     )
@@ -18,6 +19,12 @@ b-card.fragment-card(
       )
         b-icon-diagram2
         span {{ pathFormatted }}
+    b-button-group(
+      size="sm"
+    )
+      FragmentPrivacyIndicator(
+        :fragment='fragment'
+      )
   hr
   small.text-secondary
     span(
@@ -53,6 +60,7 @@ b-card.fragment-card(
 <script>
 import { mapState } from 'vuex'
 import FragmentNotes from './FragmentNotes.vue'
+import FragmentPrivacyIndicator from './FragmentPrivacyIndicator.vue'
 import FragmentToolbar from './FragmentToolbar.vue'
 import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
 
@@ -73,6 +81,7 @@ export default {
    */
   components: {
     FragmentNotes,
+    FragmentPrivacyIndicator,
     FragmentToolbar,
     NewFragmentNoteInput,
   },

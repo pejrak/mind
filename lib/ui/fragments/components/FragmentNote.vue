@@ -4,7 +4,7 @@ div
     strong {{ timeLabel }}:
     b-button.float-right(
       :variant="toConfirmRemoval ? 'success': 'secondary'"
-      @click='onRemoveNote'
+      @click="onRemoveNote"
     )
       b-icon-journal-x
     span.note-text  {{ note.text }}
@@ -14,6 +14,7 @@ import { mapMutations } from 'vuex'
 const formatTime = require('../../../format/time')
 export default {
   /** Note shape
+   *
    * {
         id: Date.now(),
         text: options.text,
