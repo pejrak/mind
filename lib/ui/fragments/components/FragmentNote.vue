@@ -2,9 +2,15 @@
 div
   small
     strong {{ timeLabel }}:
+    b-button.float-right(
+      :variant="toConfirmRemoval ? 'success': 'secondary'"
+      @click='onRemoveNote'
+    )
+      b-icon-journal-x
     span.note-text  {{ note.text }}
 </template>
 <script>
+import { mapMutations } from 'vuex'
 const formatTime = require('../../../format/time')
 export default {
   /** Note shape
@@ -20,7 +26,24 @@ export default {
       return `${formatTime(this.note.updated_at)}`
     },
   },
-  props: ['note'],
+  data() {
+    return {
+      toConfirmRemoval: false,
+    }
+  },
+  methods: {
+    ...mapMutations('fragments', ['removeFragmentNote']),
+    onRemoveNote() {
+      if (this.toConfirmRemoval) {
+        this.removeFragmentNote({
+          fragmentId: this.fragmentId,
+          noteId: this.note.id,
+        })
+      }
+      this.toConfirmRemoval = !this.toConfirmRemoval
+    }
+  },
+  props: ['fragmentId', 'note'],
 }
 </script>
 

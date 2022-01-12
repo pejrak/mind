@@ -13,7 +13,7 @@ div
       @click="submitNote"
     ) Submit new note
     b-button(@click="cancelAdding")
-      b-icon-x-square
+      b-icon-x-square Cancel
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'

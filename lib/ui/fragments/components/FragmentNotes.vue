@@ -4,7 +4,10 @@ b-list-group
     v-for="note in fragment.notes"
     :key="`fragment-${fragment.id}-note-${note.id}`"
   )
-    fragment-note(:note="note")
+    fragment-note(
+      :note="note"
+      :fragment-id="fragment.id"
+    )
 
 </template>
 

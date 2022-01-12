@@ -31,26 +31,24 @@ b-card.fragment-card(
     )  by #[strong.text-success me]
     span(v-else)  by #[strong {{ fragment.owner }}]
   .spacer
+  b-button-group
+    b-button(disabled)
+      b(v-if='hasNotes') Notes ({{ fragment.notes.length }})
+      span(v-else) No notes
+    b-button(@click='addingNote = !addingNote')
+      b-icon-journal-plus(v-if='!addingNote')
+      b-icon-x-square(v-else)
   div(v-if='addingNote')
     NewFragmentNoteInput(
       :fragment='fragment'
       @cancel='addingNote = false'
     )
-  b-button(
-    v-else
-    @click='addingNote = true'
-    title='Add new note'
-  )
-    b-icon-journal-plus
-  div(
-    v-if='fragment.notes && fragment.notes.length > 0'
-  )
-    b Notes ({{ fragment.notes.length }})
+  div(v-if='hasNotes')
     .spacer
     fragment-notes(
       :fragment="fragment"
     )
-  small(v-else) No notes
+
 </template>
 <script>
 import { mapState } from 'vuex'
@@ -82,6 +80,9 @@ export default {
     ...mapState('authentication', [
       'userEmail'
     ]),
+    hasNotes() {
+      return this.fragment.notes && this.fragment.notes.length > 0
+    },
     pathFormatted() {
       return this.fragment.path.join(' - ')
     },
