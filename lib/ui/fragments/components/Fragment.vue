@@ -7,7 +7,7 @@ b-card.fragment-card(
     :fragment="fragment"
     @toggleNotes="toggleNotes"
   )
-  p.fragment-text.text-break {{ fragment.text }}
+  p.fragment-text.text-break(v-html="fragment.text" v-linkified)
   .spacer
   b-button-toolbar
     b-button-group(
@@ -58,13 +58,17 @@ b-card.fragment-card(
 
 </template>
 <script>
+import Vue from 'vue'
 import { mapState } from 'vuex'
 import FragmentNotes from './FragmentNotes.vue'
 import FragmentPrivacyIndicator from './FragmentPrivacyIndicator.vue'
 import FragmentToolbar from './FragmentToolbar.vue'
 import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
+import linkify from 'vue-linkify'
 
 const formatTime = require('../../../format/time')
+
+Vue.directive('linkified', linkify)
 
 export default {
   /** Fragment shape
