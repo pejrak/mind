@@ -1,11 +1,10 @@
-const Config = require('./config')
-const LOG = require('debug')('mind:app')
-const port = require('./lib/system/port')
-const app = require('./lib/server')()
+import { config } from './config/index.js'
+import debug from 'debug'
+import ApplicationServer from './lib/server.js'
+
+const LOG = debug('mind:app')
 
 // Start http server listening
-app.listen(app.get('port'), function() {
-  LOG('(' + Config.name + ') application listening on port:', port)
+ApplicationServer().listen(config.port, function() {
+  LOG('(' + config.name + ') application listening on port:', config.port)
 })
-
-

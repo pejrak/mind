@@ -65,8 +65,7 @@ import FragmentPrivacyIndicator from './FragmentPrivacyIndicator.vue'
 import FragmentToolbar from './FragmentToolbar.vue'
 import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
 import linkify from 'vue-linkify'
-
-const formatTime = require('../../../format/time')
+import { formatTime } from '../../../format/formatTime'
 
 Vue.directive('linkified', linkify)
 

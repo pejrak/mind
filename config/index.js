@@ -1,9 +1,9 @@
 
-const config = require('./config')
+import { config as conf } from './config.js'
 
-module.exports = {
-  ...config,
+export const config = {
+  ...conf,
   getCurrentEnvConfig() {
-    return config[process.env.NODE_ENV || 'development']
+    return conf
   }
 }
