@@ -11,7 +11,8 @@ div
 </template>
 <script>
 import { mapMutations } from 'vuex'
-const formatTime = require('../../../format/time')
+import { formatTime } from '../../../format/formatTime.js'
+
 export default {
   /** Note shape
    *
