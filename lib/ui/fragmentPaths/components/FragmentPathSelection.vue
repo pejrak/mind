@@ -26,11 +26,11 @@ div
       )
         b-icon-diagram2
         | {{ pathOption.text }}
-    b-btn(
-      @click="toggleFragmentPathSetup"
-    )
-      b-icon-record
-      | Add path
+      b-dropdown-item-button.add-path-button(
+        @click="toggleFragmentPathSetup"
+      )
+        b-icon-record
+        b Add a path
 </template>
 
 <script>
