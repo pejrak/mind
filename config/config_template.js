@@ -1,6 +1,6 @@
 // Application configuration
-
-module.exports = {
+export const config = {
+  name: 'mind',
   port: 3337,
   storageDirectory: '/tmp',
   url: 'https://www.example.com/',
