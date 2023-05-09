@@ -2,6 +2,7 @@
 export const config = {
   name: 'mind',
   port: 3337,
+  uiPort: 3030,
   storageDirectory: '/tmp',
   url: 'https://www.example.com/',
   peerServerPort: 3338,

@@ -7,7 +7,7 @@
     "build": "./node_modules/.bin/webpack-cli --config lib/ui/vue.bundler.js",
     "start": "DEBUG=mind* nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack serve --progress --config lib/ui/vue.bundler.js"
+    "watch": "vite --config lib/ui/vite.config.js serve lib/ui"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/pejrak/mind",
   "dependencies": {
+    "@vitejs/plugin-vue2": "^2.2.0",
     "async": "^2.6.4",
     "axios": "^0.21.4",
     "bcrypt": "^5.0.1",
@@ -63,6 +64,7 @@
     "style-loader": "1.2.1",
     "underscore": "1.13.1",
     "uuid": "^3.4.0",
+    "vite": "^4.3.5",
     "vue": "^2.6.14",
     "vue-linkify": "^1.0.1",
     "vue-loader": "^15.10.1",
