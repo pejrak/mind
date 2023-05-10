@@ -1,4 +1,5 @@
 // Application configuration
+const uiPort = 3030
 export const config = {
   name: 'mind',
   port: 3337,
