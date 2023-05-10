@@ -108,7 +108,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 .container {
   padding-top: 4em;
   font-family: Arial, Helvetica, sans-serif;
