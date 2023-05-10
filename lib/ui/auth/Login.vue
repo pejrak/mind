@@ -3,51 +3,49 @@
   .jumbotron
     h1 Login
     hr
-    h2 Login with your credentials.
-    hr
-    b-form(@submit.prevent="onLoginAttempt")
-      b-row
-        b-col
-        b-col
-          b-form-group(
-            label="Email"
-            label-cols="4"
-            :state='emailInputIsValid'
-          )
-            b-form-input(
-              type="text"
-              v-model="emailInput"
-              :state='emailInputIsValid'
-            )
-          b-form-group(
-            label="Password"
-            label-cols="4"
-            :state='passwordInputIsValid'
-          )
-            b-form-input(
-              type="password"
-              v-model="passwordInput"
-              :state='passwordInputIsValid'
-            )
-        b-col
-      b-row
-        b-col
-        b-col
-          b-button.float-right(
-            :disabled='loading || !inputIsValid'
-            variant="primary"
-            type="submit"
-          ) Log in
-          .clearfix
-          hr
-          b-link.float-right(href="https://app.simpli.fi/users/forgot_password") Forgot password?
-        b-col
+    b-link(:href='loginUrl') Login with Google
+    //- h2 Login with your credentials.
+    //- hr
+    //- b-form(@submit.prevent="onLoginAttempt")
+    //-   b-row
+    //-     b-col
+    //-     b-col
+    //-       b-form-group(
+    //-         label="Email"
+    //-         label-cols="4"
+    //-         :state='emailInputIsValid'
+    //-       )
+    //-         b-form-input(
+    //-           type="text"
+    //-           v-model="emailInput"
+    //-           :state='emailInputIsValid'
+    //-         )
+    //-       b-form-group(
+    //-         label="Password"
+    //-         label-cols="4"
+    //-         :state='passwordInputIsValid'
+    //-       )
+    //-         b-form-input(
+    //-           type="password"
+    //-           v-model="passwordInput"
+    //-           :state='passwordInputIsValid'
+    //-         )
+    //-     b-col
+    //-   b-row
+    //-     b-col
+    //-     b-col
+    //-       b-button.float-right(
+    //-         :disabled='loading || !inputIsValid'
+    //-         variant="primary"
+    //-         type="submit"
+    //-       ) Log in
+    //-     b-col
 </template>
 
 <script>
 import { server } from '../server'
 import { token, tokenUserKey, tokenAuthKey } from './token'
-import log from '../utilities/log'
+import { log } from '../utilities/log'
 import { serverUrl } from '../constants'
 
 const logger = log('Login')
@@ -59,6 +57,9 @@ export default {
     },
     inputIsValid() {
       return this.emailInputIsValid && this.passwordInputIsValid
+    },
+    loginUrl() {
+      return `${serverUrl}auth/google`
     },
     passwordInputIsValid() {
       return this.passwordInput.length > 0
@@ -96,6 +97,14 @@ export default {
       logger.info('onLoginAttempt', response)
       this.loading = false
     },
+  },
+  mounted() {
+    const authToken = this.$route.query.token
+    logger.info('mounted', authToken)
+    if (authToken?.length > 0) {
+      token(tokenAuthKey).set(authToken)
+      document.location.href = `/`
+    }
   },
 }
 </script>

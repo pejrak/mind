@@ -9,7 +9,7 @@ b-navbar-nav.ml-auto
     ) Logout
   b-nav-item(
     v-else
-    href="/login"
+    to="/login"
   ) Login
 </template>
 <script>

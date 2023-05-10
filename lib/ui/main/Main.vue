@@ -7,14 +7,14 @@ div
     fixed="top"
     toggleable="md"
   )
-    b-navbar-brand Mind
+    b-navbar-brand(to='/') Mind
     MainNavigation
     AuthenticationNavigation
   MainContent
 </template>
 
 <script>
-import AuthenticationNavigation from '../authentication/components/AuthenticationNavigation.vue'
+import AuthenticationNavigation from '../auth/components/AuthenticationNavigation.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
 import { mapActions } from 'vuex'

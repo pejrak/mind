@@ -4,7 +4,8 @@ export const config = {
   port: 3337,
   uiPort: 3030,
   storageDirectory: '/tmp',
-  url: 'https://www.example.com/',
+  serverUrl: 'https://www.example.com/',
+  uiUrl: `http://localhost:${uiPort}/`,
   peerServerPort: 3338,
   secret: 'XXXXX',
   googleOauth: {
