@@ -46,10 +46,11 @@ b-container
     v-else
     deck
   )
-    b-alert(
-      show
-      variant='info'
-    ) Nothing here.
+    b-col
+      b-alert(
+        show
+        variant='info'
+      ) Nothing here.
 </template>
 <script>
 import Fragment from './Fragment.vue'

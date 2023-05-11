@@ -11,12 +11,21 @@ div
     MainNavigation
     AuthenticationNavigation
   MainContent
+  b-navbar(
+    href="#"
+    variant="primary"
+    type="dark"
+    fixed="bottom"
+    toggleable="md"
+  )
+    PeerConnectionControls
 </template>
 
 <script>
 import AuthenticationNavigation from '../auth/components/AuthenticationNavigation.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
+import PeerConnectionControls from '../components/PeerConnectionControls.vue'
 import { mapActions } from 'vuex'
 
 export default {
@@ -24,6 +33,7 @@ export default {
     AuthenticationNavigation,
     MainContent,
     MainNavigation,
+    PeerConnectionControls,
   },
   mounted() {
     this.getUser()
