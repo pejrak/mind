@@ -6,7 +6,7 @@ div
         :disabled='isConnected'
         @click='onConnect'
         size='sm'
-      ) Connect mind
+      ).text-primary Connect mind
     b-input(
       type='text' v-model='recipientId'
     )
@@ -77,7 +77,6 @@ export const PeerConnectionControls = {
     },
     onMessageRecipient() {
       const conn = this.peer.connect(this.recipientId)
-
       conn.on('open', () => conn.send(`Hello from ${this.myConnectionId}!`))
       conn.on('data', (data) => logger.info(`received`, data))
     },

@@ -1,7 +1,5 @@
 <template lang="pug">
 b-container
-  h2.text-center {{ selectedFragmentPathTitle }}
-  br
   b-row
     b-col(
       md="1"
