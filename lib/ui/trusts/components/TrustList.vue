@@ -1,4 +1,4 @@
-<template lang='pug'>
+<template lang="pug">
 b-row
   b-col.text-center
     div(v-if='outgoing.length > 0')
@@ -15,12 +15,14 @@ b-row
       variant='primary'
     )
       b-dropdown-form(style='min-width: 300px;')
-        b-input-group
+        b-input-group(size='sm')
           b-input(v-model='newTrustRecipientInput' placeholder='Email of trustee')
           b-input-group-addon
             Button(
+              :disabled='!recipientIsValid'
               variant='primary'
               @click='onAddTrust'
+              size='sm'
             ) Add trust
     hr
 </template>
@@ -29,18 +31,23 @@ b-row
 import { mapActions, mapState } from 'vuex'
 import { Button } from '../../components/Button.vue'
 import { emailIsValid } from '../../utilities/emailIsValid'
+import { log } from '../../utilities/log'
+
+const logger = log('TrustList')
 
 export default {
   components: {
     Button,
   },
   computed: {
-    ...mapState('trusts', [
-      'outgoing',
-    ]),
+    ...mapState('authentication', ['userEmail']),
+    ...mapState('trusts', ['outgoing']),
     recipientIsValid() {
-      return emailIsValid(this.newTrustRecipientInput)
-    }
+      return (
+        emailIsValid(this.newTrustRecipientInput) &&
+        this.newTrustRecipientInput !== this.userEmail
+      )
+    },
   },
   data() {
     return {
@@ -48,10 +55,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('trusts', [
-      'addTrust',
-      'removeTrust',
-    ]),
+    ...mapActions('trusts', ['addTrust', 'removeTrust']),
     async onAddTrust() {
       await this.addTrust({
         recipient: this.newTrustRecipientInput,
@@ -61,6 +65,13 @@ export default {
     },
     onRemoveTrust(trust) {
       this.removeTrust(trust)
+    },
+  },
+  watch: {
+    outgoing(val) {
+      if (val.length > 0) {
+        logger.info('watch:outgoing', val)
+      }
     },
   },
   props: {

@@ -2,8 +2,10 @@
 div
   h2.text-center {{ selectedFragmentPathTitle }}
   br
-  TrustList(:fragmentPath='selectedFragmentPath')
-
+  TrustList(
+    v-if='isAuthenticated'
+    :fragmentPath='selectedFragmentPath'
+  )
   slot
 </template>
 <script>
@@ -13,6 +15,9 @@ export default {
     TrustList: () => import('../../trusts/components/TrustList.vue'),
   },
   computed: {
+    ...mapGetters('authentication', [
+      'isAuthenticated',
+    ]),
     ...mapState('trusts', [
       'outgoing',
     ]),

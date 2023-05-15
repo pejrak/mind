@@ -18,14 +18,14 @@ div
     fixed="bottom"
     toggleable="md"
   )
-    PeerConnectionControls
+    PeerControls
 </template>
 
 <script>
 import AuthenticationNavigation from '../auth/components/AuthenticationNavigation.vue'
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
-import PeerConnectionControls from '../components/PeerConnectionControls.vue'
+import { PeerControls } from '../peer/components/PeerControls.vue'
 import { mapActions } from 'vuex'
 
 export default {
@@ -33,7 +33,7 @@ export default {
     AuthenticationNavigation,
     MainContent,
     MainNavigation,
-    PeerConnectionControls,
+    PeerControls,
   },
   mounted() {
     this.getUser()

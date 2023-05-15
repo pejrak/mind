@@ -34,9 +34,13 @@ div
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import FragmentPathSetup from './FragmentPathSetup.vue'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
+import { log } from '../../utilities/log'
+
+const logger = log('FragmentPathSelection')
+
 export default {
   components: {
     ConfirmationDialog,
@@ -63,17 +67,21 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('fragmentPaths', [
+    ...mapActions('fragmentPaths', [
       'selectFragmentPath',
     ]),
     toggleFragmentPathSetup() {
       this.dialog.show().onConfirm(() => {
-        console.log('confirmed fragment path')
+        logger.info('confirmed fragment path')
       })
     },
     triggerSetupDialogExit() {
       this.dialog.hide()
     }
   },
+  mounted() {
+    logger.info('mounted')
+    this.selectFragmentPath(this.selected)
+  }
 }
 </script>
