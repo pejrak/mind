@@ -1,11 +1,11 @@
 <template lang="pug">
 b-row
   b-col.text-center
-    div(v-if='outgoing.length > 0')
+    div(v-if='trustsOnPath.length > 0')
       h2 Trusts
-      div(v-for='trust of outgoing')
+      div(v-for='trust of trustsOnPath')
         Button(
-          variant='primary'
+          :variant=`trust.isConnected ? 'success' : 'secondary'`
           @click='onRemoveTrust(trust)'
         ) {{ trust.recipient }}
     small(v-else) No trusts on selected path.
@@ -28,7 +28,7 @@ b-row
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { Button } from '../../components/Button.vue'
 import { emailIsValid } from '../../utilities/emailIsValid'
 import { log } from '../../utilities/log'
@@ -42,11 +42,15 @@ export default {
   computed: {
     ...mapState('authentication', ['userEmail']),
     ...mapState('trusts', ['outgoing']),
+    ...mapGetters('trusts', ['outgoingOn']),
     recipientIsValid() {
       return (
         emailIsValid(this.newTrustRecipientInput) &&
         this.newTrustRecipientInput !== this.userEmail
       )
+    },
+    trustsOnPath() {
+      return this.outgoingOn(this.fragmentPath)
     },
   },
   data() {
