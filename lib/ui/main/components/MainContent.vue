@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+div.pb-5
   FragmentLoadModal
   Button(
     v-if='!showNewFragmentForm'

@@ -13,6 +13,11 @@ b-row
       text='Add trust'
       variant='primary'
     )
+      b-dropdown-item-button(
+        v-for='email of candidates'
+        :key='`trustee-candidate-${email}`'
+        @click='onAddTrust(email)'
+      ) {{ email }}
       b-dropdown-form(
         style='min-width: 300px;'
         @submit.prevent='onAddTrust'
@@ -32,8 +37,10 @@ b-row
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { Button } from '../../components/Button.vue'
+// import { pathsMatching } from '../../fragments/pathsMatching'
 import { emailIsValid } from '../../utilities/emailIsValid'
 import { log } from '../../utilities/log'
+import { uniq } from '../../utilities/uniq'
 
 const logger = log('TrustList')
 
@@ -45,6 +52,13 @@ export default {
     ...mapState('authentication', ['userEmail']),
     ...mapState('trusts', ['outgoing']),
     ...mapGetters('trusts', ['outgoingOn']),
+    candidates() {
+      return uniq(this.outgoing.filter(
+        (trust, _idx, array) => (
+          !this.trustsOnPath.find(t => t.recipient === trust.recipient)
+        )
+      ).map(t => t.recipient))
+    },
     recipientIsValid() {
       return (
         emailIsValid(this.newTrustRecipientInput) &&
@@ -62,9 +76,9 @@ export default {
   },
   methods: {
     ...mapActions('trusts', ['addTrust', 'removeTrust']),
-    async onAddTrust() {
+    async onAddTrust(recipient = this.newTrustRecipientInput) {
       await this.addTrust({
-        recipient: this.newTrustRecipientInput,
+        recipient,
         path: this.fragmentPath,
       })
       this.newTrustRecipientInput = ''

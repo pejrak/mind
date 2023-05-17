@@ -26,7 +26,7 @@ div
     ) {{ pathComponent }}
     .spacer
     b-button(
-      variant="primary"
+      variant="success"
       :disabled='!pathIsValid || pathAlreadyAdded'
       @click="submitNewPath"
     ) Save path: #[strong {{ pathLabel }}]

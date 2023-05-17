@@ -33,12 +33,12 @@ div
         b-icon-trash
         span Remove
 
-    b-button-group(
-      size="sm"
-    )
-      b-button(disabled)
-        b-icon-diagram2
-        span {{ pathFormatted }}
+    //- b-button-group(
+    //-   size="sm"
+    //- )
+    //-   b-button(disabled)
+    //-     b-icon-diagram2
+    //-     span {{ pathFormatted }}
 </template>
 
 <script>
@@ -53,9 +53,9 @@ export default {
     confirmationDialogReference() {
       return `removal-cofirmation-dialog-${this.fragment.id}`
     },
-    pathFormatted() {
-      return this.fragment.path.join(' - ')
-    },
+    // pathFormatted() {
+    //   return this.fragment.path.join(' - ')
+    // },
   },
   methods: {
     ...mapActions('fragments', [
