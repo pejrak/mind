@@ -1,20 +1,22 @@
 <template lang="pug">
 b-row
   b-col.text-center
-    div(v-if='trustsOnPath.length > 0')
-      h2 Trusts
-      div(v-for='trust of trustsOnPath')
-        Button(
+    h3 Trusts
+    span(v-if='trustsOnPath.length > 0')
+      span(v-for='trust of trustsOnPath')
+        Button.mr-1(
           :variant=`trust.isConnected ? 'success' : 'secondary'`
           @click='onRemoveTrust(trust)'
         ) {{ trust.recipient }}
-    small(v-else) No trusts on selected path.
-    hr
+    .small(v-else) No trusts on selected path.
     b-dropdown(
       text='Add trust'
       variant='primary'
     )
-      b-dropdown-form(style='min-width: 300px;')
+      b-dropdown-form(
+        style='min-width: 300px;'
+        @submit.prevent='onAddTrust'
+      )
         b-input-group(size='sm')
           b-input(v-model='newTrustRecipientInput' placeholder='Email of trustee')
           b-input-group-addon
