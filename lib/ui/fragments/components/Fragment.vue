@@ -3,6 +3,8 @@ b-card.fragment-card(
   :border-variant="fragment.forgotten ? 'warning' : 'dark'"
   bg-variant='secondary'
 )
+  DebugContent(:modalId='`fragment-${fragment.id}-debug`')
+    pre {{ fragment }}
   fragment-toolbar(
     :fragment="fragment"
     @toggleNotes="toggleNotes"
@@ -66,6 +68,7 @@ import FragmentToolbar from './FragmentToolbar.vue'
 import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
 import linkify from 'vue-linkify'
 import { formatTime } from '../../../format/formatTime'
+import { DebugContent } from '../../components/DebugContent.vue'
 
 Vue.directive('linkified', linkify)
 
@@ -83,6 +86,7 @@ export default {
       }
    */
   components: {
+    DebugContent,
     FragmentNotes,
     FragmentPrivacyIndicator,
     FragmentToolbar,

@@ -15,12 +15,19 @@ div
         span Forget
 
       b-button(
-        v-else
+        v-if='isRecallable'
         @click="triggerRecollect"
         variant="primary"
       )
         b-icon-bookmark-check
         span Recollect
+      b-button(
+        v-if='isMemorizable'
+        @click="triggerRecollect"
+        variant="danger"
+      )
+        b-icon-bookmark-check
+        span Remember
 
       b-button(@click="toggleNotes")
         b-icon-journal
@@ -49,6 +56,12 @@ export default {
     },
     isForgettable() {
       return !this.fragment.forgotten
+    },
+    isMemorizable() {
+      return !this.fragment.forgotten && this.fragment.collected
+    },
+    isRecallable() {
+      return this.fragment.forgotten
     },
   },
   methods: {
