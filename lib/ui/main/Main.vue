@@ -26,8 +26,12 @@ import AuthenticationNavigation from '../auth/components/AuthenticationNavigatio
 import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
 import { PeerControls } from '../peer/components/PeerControls.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import VueRouter from 'vue-router'
+import { log } from '../utilities/log'
+import { TEMPORARY_PATH_LABEL } from '../fragmentPaths/constants'
+
+const logger = log('Main')
 
 export default {
   components: {
@@ -36,13 +40,39 @@ export default {
     MainNavigation,
     PeerControls,
   },
-  mounted() {
-    this.getUser()
+  computed: {
+    ...mapGetters('fragmentPaths', [
+      'selectedFragmentPathName',
+    ]),
+    routedFragmentPath() {
+      return this.$route.params?.fragmentPath ?? ''
+    },
+  },
+  async mounted() {
+    await this.getUser()
+    this.selectRoutedPath()
   },
   methods: {
     ...mapActions('authentication', [
       'getUser',
-    ])
+    ]),
+    ...mapMutations('fragmentPaths', [
+      'select',
+    ]),
+    selectRoutedPath() {
+      logger.info('selectRoutedPath', this.routedFragmentPath)
+      if (!this.routedFragmentPath) {
+        this.$router.push({
+          path: `/on/${TEMPORARY_PATH_LABEL}`
+        })
+        return
+      }
+      if (this.routedFragmentPath !== this.selectedFragmentPathName) {
+        this.select(this.routedFragmentPath)
+        return
+      }
+      logger.info('already selected')
+    },
   },
   router: new VueRouter({
     routes: [
@@ -55,7 +85,23 @@ export default {
         component: MainContent,
       },
     ],
-  })
+  }),
+  watch: {
+    routedFragmentPath(p) {
+      logger.info('routedFragmentPath', p)
+      // this.select(p)
+      this.$nextTick(() => this.selectRoutedPath())
+    },
+    selectedFragmentPathName() {
+      this.$nextTick(() => {
+        if (this.selectedFragmentPathName !== this.routedFragmentPath) {
+          this.$router.push({
+            path: `/on/${this.selectedFragmentPathName}`
+          })
+        }
+      })
+    },
+  }
 }
 </script>
 
