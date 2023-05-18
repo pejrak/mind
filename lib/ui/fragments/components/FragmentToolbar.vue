@@ -9,7 +9,7 @@ div
     )
       b-button(
         @click="triggerForget"
-        v-if="!fragment.forgotten"
+        v-if="isForgettable"
       )
         b-icon-bookmark-dash
         span Forget
@@ -33,12 +33,6 @@ div
         b-icon-trash
         span Remove
 
-    //- b-button-group(
-    //-   size="sm"
-    //- )
-    //-   b-button(disabled)
-    //-     b-icon-diagram2
-    //-     span {{ pathFormatted }}
 </template>
 
 <script>
@@ -53,9 +47,9 @@ export default {
     confirmationDialogReference() {
       return `removal-cofirmation-dialog-${this.fragment.id}`
     },
-    // pathFormatted() {
-    //   return this.fragment.path.join(' - ')
-    // },
+    isForgettable() {
+      return !this.fragment.forgotten
+    },
   },
   methods: {
     ...mapActions('fragments', [
