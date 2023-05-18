@@ -1,5 +1,7 @@
 <template lang="pug">
-span
+span(
+  v-if='environment === "development"'
+)
   Modal(
     :ref='modalIdReference'
     :id='modalId'
@@ -15,6 +17,7 @@ span
 </template>
 
 <script>
+import { environment } from '../constants'
 import { Button } from './Button.vue'
 import { Modal } from './Modal.vue'
 
@@ -24,6 +27,9 @@ export const DebugContent = {
     Modal,
   },
   computed: {
+    environment() {
+      return environment
+    },
     modalIdReference() {
       return `modal-id-${this.modalId}`
     },

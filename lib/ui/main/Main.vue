@@ -10,7 +10,6 @@ div
     b-navbar-brand(to='/') Mind
     MainNavigation
     AuthenticationNavigation
-  MainContent
   b-navbar(
     href="#"
     variant="primary"
@@ -19,6 +18,7 @@ div
     toggleable="md"
   )
     PeerControls
+  router-view
 </template>
 
 <script>
@@ -27,6 +27,7 @@ import MainNavigation from './components/MainNavigation.vue'
 import MainContent from './components/MainContent.vue'
 import { PeerControls } from '../peer/components/PeerControls.vue'
 import { mapActions } from 'vuex'
+import VueRouter from 'vue-router'
 
 export default {
   components: {
@@ -43,6 +44,18 @@ export default {
       'getUser',
     ])
   },
+  router: new VueRouter({
+    routes: [
+      {
+        path: '/',
+        component: MainContent,
+      },
+      {
+        path: '/on/:fragmentPath',
+        component: MainContent,
+      },
+    ],
+  })
 }
 </script>
 

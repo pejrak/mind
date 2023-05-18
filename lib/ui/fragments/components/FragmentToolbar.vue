@@ -23,8 +23,8 @@ div
         span Recollect
       b-button(
         v-if='isMemorizable'
-        @click="triggerRecollect"
-        variant="danger"
+        @click="triggerMemorize"
+        variant="outline-success"
       )
         b-icon-bookmark-check
         span Remember
@@ -58,7 +58,11 @@ export default {
       return !this.fragment.forgotten
     },
     isMemorizable() {
-      return !this.fragment.forgotten && this.fragment.collected
+      return (
+        !this.fragment.forgotten &&
+        !this.fragment.memorized &&
+        this.fragment.collected
+      )
     },
     isRecallable() {
       return this.fragment.forgotten
@@ -67,24 +71,26 @@ export default {
   methods: {
     ...mapActions('fragments', [
       'forgetFragment',
+      'memorizeFragment',
       'recollectFragment',
     ]),
-    ...mapMutations('fragments', [
-      'removeFragment',
-      'showNotes',
-    ]),
+    ...mapMutations('fragments', ['removeFragment', 'showNotes']),
     toggleNotes() {
       this.showNotes(this.fragment.id)
     },
     triggerForget() {
       this.forgetFragment(this.fragment.id)
     },
+    triggerMemorize() {
+      this.memorizeFragment(this.fragment.id)
+    },
     triggerRecollect() {
       this.recollectFragment(this.fragment.id)
     },
     triggerRemoval() {
       this.$refs[this.confirmationDialogReference]
-        .show().onConfirm(() => {
+        .show()
+        .onConfirm(() => {
           this.removeFragment(this.fragment.id)
         })
     },
