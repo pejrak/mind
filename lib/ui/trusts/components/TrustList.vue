@@ -15,9 +15,10 @@ b-row
         template(#button-content)
           b-icon-arrow-repeat
           span  {{ trust.recipient }}
-        b-dropdown-item-button(
+        b-dropdown-item(
           @click='onRemoveTrust(trust)'
-        ) Remove trust
+        )
+          span.text-danger Remove trust
     .small(v-else) No trusts on selected path.
     b-dropdown(
       text='Add trust'
@@ -93,6 +94,9 @@ export default {
       'syncConnection',
     ]),
     async onAddTrust(recipient = this.newTrustRecipientInput) {
+      if (!confirm(`Trust ${recipient}?`)) {
+        return
+      }
       await this.addTrust({
         recipient,
         path: this.fragmentPath,
@@ -100,6 +104,9 @@ export default {
       this.newTrustRecipientInput = ''
     },
     onRemoveTrust(trust) {
+      if (!confirm(`Remove trust to ${trust.recipient}?`)) {
+        return
+      }
       this.removeTrust(trust)
     },
     onSync(trust) {
