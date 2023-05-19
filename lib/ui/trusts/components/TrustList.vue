@@ -2,12 +2,22 @@
 b-row
   b-col.text-center
     h3 Trusts
-    span(v-if='trustsOnPath.length > 0')
-      span(v-for='trust of trustsOnPath')
-        Button.mr-1(
-          :variant=`trust.isConnected ? 'success' : 'secondary'`
+    span(
+      v-if='trustsOnPath.length > 0'
+      v-for='trust of trustsOnPath'
+      :key='`trust-${trust.recipient}`'
+    )
+      b-dropdown.mr-1(
+        :variant=`trust.isConnected ? 'success' : 'secondary'`
+        @click='onSync(trust)'
+        split
+      )
+        template(#button-content)
+          b-icon-arrow-repeat
+          span  {{ trust.recipient }}
+        b-dropdown-item-button(
           @click='onRemoveTrust(trust)'
-        ) {{ trust.recipient }}
+        ) Remove trust
     .small(v-else) No trusts on selected path.
     b-dropdown(
       text='Add trust'
@@ -75,7 +85,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions('trusts', ['addTrust', 'removeTrust']),
+    ...mapActions('trusts', [
+      'addTrust',
+      'removeTrust',
+    ]),
+    ...mapActions('peers', [
+      'syncConnection',
+    ]),
     async onAddTrust(recipient = this.newTrustRecipientInput) {
       await this.addTrust({
         recipient,
@@ -85,6 +101,9 @@ export default {
     },
     onRemoveTrust(trust) {
       this.removeTrust(trust)
+    },
+    onSync(trust) {
+      this.syncConnection(trust.recipient)
     },
   },
   watch: {

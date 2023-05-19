@@ -29,12 +29,12 @@ div
         b-icon-bookmark-check
         span Remember
 
-      b-button(@click="toggleNotes")
-        b-icon-journal
-        span Notes
-          span(
-            v-if='fragment.notes.length'
-          )  ({{ fragment.notes.length }})
+      //- b-button(@click="toggleNotes")
+      //-   b-icon-journal
+      //-   span Notes
+      //-     span(
+      //-       v-if='fragment.notes.length'
+      //-     )  ({{ fragment.notes.length }})
 
       b-button(@click="triggerRemoval")
         b-icon-trash
