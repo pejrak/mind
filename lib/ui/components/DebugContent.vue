@@ -7,13 +7,13 @@ span(
     :id='modalId'
     title='Debug content'
   )
-    slot
-  Button.my-1(
+    .scrollable
+      slot
+  Button.text-muted(
     @click='onShowDebugContent'
     size='sm'
-    variant='outline-dark'
   )
-    b-icon-alt
+    b-icon-info
 </template>
 
 <script>

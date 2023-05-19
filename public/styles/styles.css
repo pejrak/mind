@@ -21,3 +21,8 @@
 .full-text {
   white-space: pre-line;
 }
+
+.scrollable {
+  overflow-y: auto;
+  max-height: 600px;
+}

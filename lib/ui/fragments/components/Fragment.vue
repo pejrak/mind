@@ -1,10 +1,8 @@
 <template lang="pug">
 b-card.fragment-card(
-  :border-variant="fragment.forgotten ? 'warning' : 'dark'"
+  :border-variant="borderVariant"
   bg-variant='secondary'
 )
-  DebugContent(:modalId='`fragment-${fragment.id}-debug`')
-    pre {{ fragment }}
   fragment-toolbar(
     :fragment="fragment"
     @toggleNotes="toggleNotes"
@@ -38,7 +36,7 @@ b-card.fragment-card(
     span(
       v-if="!fragment.owner || fragment.owner === userEmail"
     )  by #[strong.text-success me]
-    span(v-else)  by #[strong {{ fragment.owner }}]
+    span(v-else)  by #[strong.text-primary {{ fragment.owner }}]
   .spacer
   b-button-group
     b-button(disabled)
@@ -68,7 +66,6 @@ import FragmentToolbar from './FragmentToolbar.vue'
 import NewFragmentNoteInput from './NewFragmentNoteInput.vue'
 import linkify from 'vue-linkify'
 import { formatTime } from '../../../format/formatTime'
-import { DebugContent } from '../../components/DebugContent.vue'
 
 Vue.directive('linkified', linkify)
 
@@ -86,7 +83,6 @@ export default {
       }
    */
   components: {
-    DebugContent,
     FragmentNotes,
     FragmentPrivacyIndicator,
     FragmentToolbar,
@@ -96,6 +92,9 @@ export default {
     ...mapState('authentication', [
       'userEmail'
     ]),
+    borderVariant() {
+      return this.fragment.collected ? 'default' : 'success'
+    },
     hasNotes() {
       return this.fragment.notes && this.fragment.notes.length > 0
     },

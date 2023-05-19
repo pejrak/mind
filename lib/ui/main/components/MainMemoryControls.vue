@@ -30,6 +30,7 @@ b-button-group
     :disabled='!canSave'
     variant='success'
     @click='triggerMemorySave'
+    :title='``'
   )
     b-icon-cloud-upload
     | Save
@@ -44,6 +45,7 @@ b-button-group
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { formatTime } from '../../utilities/formatTime'
 
 export default {
   computed: {
@@ -73,6 +75,7 @@ export default {
       'save',
       'purge',
     ]),
+    formatTime,
     async triggerMemoryExport() {
       this.exportContent = (
         `data:text/plain;charset=UTF-8,${this.encodedRecall}`

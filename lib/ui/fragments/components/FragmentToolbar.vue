@@ -39,16 +39,21 @@ div
       b-button(@click="triggerRemoval")
         b-icon-trash
         span Remove
+      DebugContent(:modalId='`fragment-${fragment.id}-debug`')
+        pre {{ fragment }}
 
 </template>
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
 import ConfirmationDialog from '../../components/ConfirmationDialog.vue'
+import { DebugContent } from '../../components/DebugContent.vue'
+
 export default {
   props: ['fragment'],
   components: {
     ConfirmationDialog,
+    DebugContent,
   },
   computed: {
     confirmationDialogReference() {
