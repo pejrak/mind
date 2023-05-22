@@ -4,7 +4,7 @@
   "description": "quick storage",
   "main": "app.js",
   "scripts": {
-    "build": "./node_modules/.bin/webpack-cli --config lib/ui/vue.bundler.js",
+    "build": "vite --config lib/ui/vite.config.js build",
     "start": "DEBUG=mind* nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "vite --config lib/ui/vite.config.js serve lib/ui",
