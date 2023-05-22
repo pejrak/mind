@@ -8,7 +8,7 @@ import VueRouter from 'vue-router'
 
 export default {
   router: new VueRouter({
-    mode: 'history',
+    // mode: 'history',
     routes: [
       {
         path: '/',
