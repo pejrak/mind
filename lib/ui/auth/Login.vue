@@ -4,42 +4,6 @@
     h1 Login
     hr
     b-link(:href='loginUrl') Login with Google
-    //- h2 Login with your credentials.
-    //- hr
-    //- b-form(@submit.prevent="onLoginAttempt")
-    //-   b-row
-    //-     b-col
-    //-     b-col
-    //-       b-form-group(
-    //-         label="Email"
-    //-         label-cols="4"
-    //-         :state='emailInputIsValid'
-    //-       )
-    //-         b-form-input(
-    //-           type="text"
-    //-           v-model="emailInput"
-    //-           :state='emailInputIsValid'
-    //-         )
-    //-       b-form-group(
-    //-         label="Password"
-    //-         label-cols="4"
-    //-         :state='passwordInputIsValid'
-    //-       )
-    //-         b-form-input(
-    //-           type="password"
-    //-           v-model="passwordInput"
-    //-           :state='passwordInputIsValid'
-    //-         )
-    //-     b-col
-    //-   b-row
-    //-     b-col
-    //-     b-col
-    //-       b-button.float-right(
-    //-         :disabled='loading || !inputIsValid'
-    //-         variant="primary"
-    //-         type="submit"
-    //-       ) Log in
-    //-     b-col
 </template>
 
 <script>
@@ -59,7 +23,7 @@ export default {
       return this.emailInputIsValid && this.passwordInputIsValid
     },
     loginUrl() {
-      return `${serverUrl}auth/google`
+      return `${serverUrl}api/auth/google`
     },
     passwordInputIsValid() {
       return this.passwordInput.length > 0
