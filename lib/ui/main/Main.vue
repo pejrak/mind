@@ -22,9 +22,7 @@ div
 </template>
 
 <script>
-import AuthenticationNavigation from '../auth/components/AuthenticationNavigation.vue'
 import MainNavigation from './components/MainNavigation.vue'
-import MainContent from './components/MainContent.vue'
 import { PeerControls } from '../peer/components/PeerControls.vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import VueRouter from 'vue-router'
@@ -35,8 +33,7 @@ const logger = log('Main')
 
 export default {
   components: {
-    AuthenticationNavigation,
-    MainContent,
+    AuthenticationNavigation: () => import('../auth/components/AuthenticationNavigation.vue'),
     MainNavigation,
     PeerControls,
   },
@@ -78,11 +75,11 @@ export default {
     routes: [
       {
         path: '/',
-        component: MainContent,
+        component: () => import('./components/MainContent.vue'),
       },
       {
         path: '/on/:fragmentPath',
-        component: MainContent,
+        component: () => import('./components/MainContent.vue'),
       },
     ],
   }),

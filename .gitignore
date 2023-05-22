@@ -7,3 +7,4 @@ tmp/
 public/internal/*-bundle.*
 public/internal/*-bundle.*
 public/internal/*.hot-update.*
+lib/ui/dist/

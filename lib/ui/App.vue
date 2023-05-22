@@ -5,22 +5,19 @@ div
 
 <script>
 import VueRouter from 'vue-router'
-import LoginVue from './auth/Login.vue'
-import Main from './main/Main.vue'
 
 export default {
   router: new VueRouter({
-    mode: 'history',
     routes: [
       {
         path: '/',
         name: 'Home',
-        component: Main,
+        component: () => import('./main/Main.vue'),
       },
       {
         path: '/login',
         name: 'Login',
-        component: LoginVue,
+        component: () => import('./auth/Login.vue'),
       },
     ]
   }),
